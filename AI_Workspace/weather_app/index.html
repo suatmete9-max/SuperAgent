@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Weather APK</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts (Poppins & Outfit) -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(180deg, #0f172a 0%, #1e1b4b 100%);
+            min-height: 100vh;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .pulse-slow {
+            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: .8; transform: scale(1.03); }
+        }
+    </style>
+</head>
+<body class="text-white flex justify-center items-center p-0 md:p-4 overflow-x-hidden">
+
+    <!-- Mobile Mockup Container -->
+    <div class="w-full max-w-md h-screen md:h-[840px] glass-card md:rounded-[40px] shadow-2xl overflow-y-auto relative flex flex-col justify-between border-none md:border-8 md:border-slate-800">
+        
+        <!-- Android Status Bar Simulation -->
+        <div class="px-6 pt-3 flex justify-between items-center text-xs opacity-75 select-none">
+            <span id="live-time">12:00 PM</span>
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-signal"></i>
+                <i class="fa-solid fa-wifi"></i>
+                <i class="fa-solid fa-battery-full text-green-400"></i>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <header class="px-6 pt-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/50">
+                    <i class="fa-solid fa-cloud-sun-rain text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold tracking-wide">Mausam Live</h1>
+                    <span class="text-[10px] text-blue-400 uppercase tracking-widest font-semibold">Premium APK</span>
+                </div>
+            </div>
+            <button onclick="detectLocation()" class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all duration-300" title="Current Location">
+                <i class="fa-solid fa-location-crosshairs text-blue-400 animate-pulse"></i>
+            </button>
+        </header>
+
+        <!-- Main Content Panel -->
+        <main class="flex-1 px-6 py-4 flex flex-col justify-start gap-5">
+            
+            <!-- Search Bar -->
+            <div class="relative">
+                <input type="text" id="search-input" placeholder="Search City Name (e.g. Mumbai, Delhi, London)..." 
+                    class="w-full py-3.5 pl-5 pr-12 rounded-2xl bg-white/5 border border-white/10 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white/10 transition-all text-sm font-medium shadow-inner">
+                <button onclick="searchCity()" class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center text-white hover:bg-blue-500 transition-all">
+                    <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                </button>
+            </div>
+
+            <!-- Loading Spinner -->
+            <div id="loader" class="hidden flex flex-col justify-center items-center py-12">
+                <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                <p class="mt-4 text-sm text-slate-400">Live Weather Fetching...</p>
+            </div>
+
+            <!-- Error Message -->
+            <div id="error-box" class="hidden bg-red-500/20 border border-red-500/30 text-red-200 text-sm p-4 rounded-2xl flex items-center gap-3">
+                <i class="fa-solid fa-circle-exclamation text-lg"></i>
+                <p id="error-msg">City not found. Try searching another city.</p>
+            </div>
+
+            <!-- Weather Details Section -->
+            <div id="weather-display" class="space-y-6">
+                <!-- City Name & Date -->
+                <div class="text-center mt-2">
+                    <h2 id="city-name" class="text-3xl font-bold tracking-tight">---</h2>
+                    <p id="current-date" class="text-xs text-slate-400 mt-1">---</p>
+                </div>
+
+                <!-- Central Weather Illustration -->
+                <div class="flex flex-col items-center py-4">
+                    <div id="weather-icon-container" class="w-32 h-32 flex items-center justify-center text-7xl text-blue-400 drop-shadow-[0_10px_15px_rgba(59,130,246,0.4)] pulse-slow">
+                        <i class="fa-solid fa-cloud-sun"></i>
+                    </div>
+                    <p id="weather-desc" class="text-lg font-semibold tracking-wide mt-2 capitalize text-blue-200">---</p>
+                </div>
+
+                <!-- Big Temperature Display -->
+                <div class="text-center">
+                    <div class="inline-flex items-start">
+                        <span id="current-temp" class="text-6xl font-extrabold tracking-tighter">--</span>
+                        <span class="text-2xl font-bold text-blue-400 mt-1">°C</span>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-1">Feels Like <span id="feels-like" class="font-semibold text-white">--°C</span></p>
+                </div>
+
+                <!-- Key Specs Grid -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="glass-card p-4 rounded-2xl flex items-center gap-3.5">
+                        <div class="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400">
+                            <i class="fa-solid fa-droplet text-lg"></i>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Humidity</p>
+                            <h4 id="humidity" class="text-sm font-bold text-white">--%</h4>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-4 rounded-2xl flex items-center gap-3.5">
+                        <div class="w-10 h-10 rounded-xl bg-teal-500/10 flex items-center justify-center text-teal-400">
+                            <i class="fa-solid fa-wind text-lg"></i>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Wind Speed</p>
+                            <h4 id="wind-speed" class="text-sm font-bold text-white">-- km/h</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Forecast Header -->
+                <div class="pt-2">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400">5-Day Forecast</h3>
+                    <div id="forecast-container" class="mt-3 space-y-2.5">
+                        <!-- Forecast row placeholders -->
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- APK Download / Installation Prompt footer -->
+        <footer class="p-4 glass-card border-t border-white/5 flex flex-col gap-2.5">
+            <div class="flex items-center justify-between text-xs">
+                <span class="text-emerald-400 font-semibold flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span> Live Tracking Online
+                </span>
+                <span class="text-slate-400">Version 2.0 (Stable)</span>
+            </div>
+            <button onclick="window.print()" class="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl font-semibold text-xs tracking-wider uppercase transition-all duration-300 shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-download"></i> Download Weather Report (PDF)
+            </button>
+        </footer>
+    </div>
+
+    <!-- Weather Code Map Utility -->
+    <script>
+        // Update real time simulation
+        function updateTime() {
+            const now = new Date();
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            let ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // the hour '0' should be '12'
+            minutes = minutes < 10 ? '0'+minutes : minutes;
+            document.getElementById('live-time').innerText = hours + ':' + minutes + ' ' + ampm;
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        // Weather Code Interpretation Table (WMO standards)
+        const weatherCodes = {
+            0: { desc: "Clear Sky (Saaf Mausam)", icon: "fa-solid fa-sun text-yellow-400" },
+            1: { desc: "Mainly Clear (Halka Saaf)", icon: "fa-solid fa-cloud-sun text-yellow-300" },
+            2: { desc: "Partly Cloudy (Badal)", icon: "fa-solid fa-cloud-sun-rain text-blue-300" },
+            3: { desc: "Overcast (Ghana Badal)", icon: "fa-solid fa-cloud text-gray-400" },
+            45: { desc: "Fog (Kohra)", icon: "fa-solid fa-smog text-slate-300" },
+            48: { desc: "Depositing Rime Fog", icon: "fa-solid fa-smog text-slate-400" },
+            51: { desc: "Light Drizzle", icon: "fa-solid fa-cloud-rain text-blue-300" },
+            53: { desc: "Moderate Drizzle", icon: "fa-solid fa-cloud-rain text-blue-400" },
+            55: { desc: "Dense Drizzle", icon: "fa-solid fa-cloud-showers-heavy text-blue-500" },
+            61: { desc: "Slight Rain (Halki Baarish)", icon: "fa-solid fa-cloud-rain text-blue-400" },
+            63: { desc: "Moderate Rain (Baarish)", icon: "fa-solid fa-cloud-showers-water text-blue-500" },
+            65: { desc: "Heavy Rain (Tez Baarish)", icon: "fa-solid fa-cloud-showers-heavy text-blue-600" },
+            71: { desc: "Slight Snowfall", icon: "fa-regular fa-snowflake text-white" },
+            73: { desc: "Moderate Snowfall", icon: "fa-solid fa-snowflake text-white" },
+            75: { desc: "Heavy Snowfall", icon: "fa-solid fa-snowflake text-white" },
+            80: { desc: "Slight Rain Showers", icon: "fa-solid fa-cloud-sun-rain text-blue-400" },
+            81: { desc: "Moderate Rain Showers", icon: "fa-solid fa-cloud-showers-heavy text-blue-500" },
+            82: { desc: "Violent Rain Showers", icon: "fa-solid fa-cloud-showers-heavy text-blue-700" },
+            95: { desc: "Thunderstorm (Toofan)", icon: "fa-solid fa-cloud-bolt text-amber-500" },
+            96: { desc: "Thunderstorm with Hail", icon: "fa-solid fa-cloud-bolt text-yellow-500" },
+            99: { desc: "Severe Thunderstorm", icon: "fa-solid fa-cloud-bolt text-red-500" }
+        };
+
+        // Auto-detect Location on Start
+        window.onload = () => {
+            detectLocation();
+        };
+
+        function detectLocation() {
+            toggleLoader(true);
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        fetchWeatherByCoords(position.coords.latitude, position.coords.longitude, "Your Location");
+                    },
+                    (error) => {
+                        // Fallback to Delhi if location is blocked/unavailable
+                        fetchWeatherByCity("Delhi");
+                    }
+                );
+            } else {
+                fetchWeatherByCity("Delhi");
+            }
+        }
+
+        function toggleLoader(show) {
+            document.getElementById('loader').classList.toggle('hidden', !show);
+            document.getElementById('weather-display').classList.toggle('hidden', show);
+            document.getElementById('error-box').classList.add('hidden');
+        }
+
+        async function fetchWeatherByCity(cityName) {
+            toggleLoader(true);
+            try {
+                // Geocoding API
+                const geoUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(cityName)}&count=1&language=en&format=json`;
+                const geoRes = await fetch(geoUrl);
+                const geoData = await geoRes.json();
+
+                if (!geoData.results || geoData.results.length === 0) {
+                    showError(`City "${cityName}" nahi mili! Please sahi naam enter karein.`);
+                    toggleLoader(false);
+                    return;
+                }
+
+                const location = geoData.results[0];
+                const displayLabel = `${location.name}, ${location.country || ''}`;
+                await fetchWeatherByCoords(location.latitude, location.longitude, displayLabel);
+            } catch (err) {
+                showError("Network connection/API load temporary error!");
+                toggleLoader(false);
+            }
+        }
+
+        async function fetchWeatherByCoords(lat, lon, label) {
+            try {
+                const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto`;
+                const weatherRes = await fetch(weatherUrl);
+                const weatherData = await weatherRes.json();
+
+                updateUI(weatherData, label);
+            } catch (err) {
+                showError("Kuch galat hua. Dobara koshish karein!");
+            } finally {
+                toggleLoader(false);
+            }
+        }
+
+        function updateUI(data, locationName) {
+            // Update Current Weather Details
+            const current = data.current;
+            const weatherCode = current.weather_code;
+            const info = weatherCodes[weatherCode] || { desc: "Moderate", icon: "fa-solid fa-cloud text-blue-300" };
+
+            document.getElementById('city-name').innerText = locationName;
+            document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'short' });
+            document.getElementById('weather-icon-container').innerHTML = `<i class="${info.icon}"></i>`;
+            document.getElementById('weather-desc').innerText = info.desc;
+            document.getElementById('current-temp').innerText = Math.round(current.temperature_2m);
+            document.getElementById('feels-like').innerText = Math.round(current.apparent_temperature) + "°C";
+            document.getElementById('humidity').innerText = current.relative_humidity_2m + "%";
+            document.getElementById('wind-speed').innerText = current.wind_speed_10m + " km/h";
+
+            // Build Forecast rows
+            const daily = data.daily;
+            const container = document.getElementById('forecast-container');
+            container.innerHTML = ''; // Clear old
+
+            for (let i = 1; i <= 5; i++) {
+                const date = new Date(daily.time[i]);
+                const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
+                const dailyCode = daily.weather_code[i];
+                const dailyInfo = weatherCodes[dailyCode] || { desc: "Cloudy", icon: "fa-solid fa-cloud text-slate-300" };
+                
+                const forecastRow = `
+                    <div class="glass-card px-4 py-3 rounded-xl flex items-center justify-between text-xs">
+                        <span class="font-semibold w-16">${dayName}</span>
+                        <span class="text-lg ${dailyInfo.icon.split(' ')[1] || 'text-white'}"><i class="${dailyInfo.icon}"></i></span>
+                        <span class="text-slate-300 text-left w-24 truncate capitalize">${dailyInfo.desc.split(' ')[0]}</span>
+                        <span class="font-bold text-white">${Math.round(daily.temperature_2m_max[i])}° <span class="text-slate-400 text-[10px] font-normal">/ ${Math.round(daily.temperature_2m_min[i])}°</span></span>
+                    </div>
+                `;
+                container.innerHTML += forecastRow;
+            }
+        }
+
+        function searchCity() {
+            const query = document.getElementById('search-input').value.trim();
+            if (query) {
+                fetchWeatherByCity(query);
+            }
+        }
+
+        // Enable Search on Enter key
+        document.getElementById('search-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                searchCity();
+            }
+        });
+
+        function showError(msg) {
+            const errorBox = document.getElementById('error-box');
+            document.getElementById('error-msg').innerText = msg;
+            errorBox.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

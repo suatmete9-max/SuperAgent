@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PromptBot AI - Professional Script & Prompt Generator</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            800: '#5b21b6',
+                            900: '#4c1d95',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0b0f19;
+        }
+        .code-font {
+            font-family: 'Fira Code', monospace;
+        }
+        .glass {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-highlight {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(124, 58, 237, 0.05) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body class="text-slate-100 min-h-screen flex flex-col selection:bg-brand-500 selection:text-white overflow-x-hidden">
+
+    <!-- Decorative Background Gradients -->
+    <div class="absolute top-0 left-1/4 w-96 h-96 bg-brand-600/20 rounded-full blur-[120px] pointer-events-none"></div>
+    <div class="absolute bottom-10 right-10 w-96 h-96 bg-blue-600/10 rounded-full blur-[150px] pointer-events-none"></div>
+
+    <!-- Header -->
+    <header class="sticky top-0 z-50 glass border-b border-slate-800 py-4 px-6">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gradient-to-tr from-brand-600 to-indigo-500 p-2.5 rounded-xl shadow-lg shadow-brand-500/20">
+                    <i class="fa-solid fa-robot text-xl text-white"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-brand-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent">PromptBot AI</span>
+                    <span class="block text-xs text-slate-400 font-medium">Script & Prompt Engine 🚀</span>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span class="hidden md:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    Live & Online
+                </span>
+                <a href="#" onclick="window.location.reload()" class="text-slate-400 hover:text-white transition-all text-sm font-semibold flex items-center gap-2 bg-slate-800/50 hover:bg-slate-800 px-4 py-2 rounded-lg border border-slate-700/50">
+                    <i class="fa-solid fa-rotate-right"></i> Reset Bot
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Body Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 z-10">
+        
+        <!-- Left Control Panel (Options, Configs & Inputs) - Occupies 7 columns -->
+        <section class="lg:col-span-7 flex flex-col space-y-6">
+            
+            <!-- Navigation Tabs -->
+            <div class="flex bg-slate-900/80 p-1.5 rounded-xl border border-slate-800/80">
+                <button id="tab-interactive-btn" onclick="switchTab('interactive')" class="flex-1 py-2.5 px-4 rounded-lg font-semibold text-sm transition-all duration-200 flex items-center justify-center gap-2 bg-brand-600 text-white shadow-md shadow-brand-600/10">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Interactive Bot
+                </button>
+                <button id="tab-templates-btn" onclick="switchTab('templates')" class="flex-1 py-2.5 px-4 rounded-lg font-semibold text-sm transition-all duration-200 flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800/40">
+                    <i class="fa-solid fa-list-check"></i> Ready Templates
+                </button>
+                <button id="tab-enhancer-btn" onclick="switchTab('enhancer')" class="flex-1 py-2.5 px-4 rounded-lg font-semibold text-sm transition-all duration-200 flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800/40">
+                    <i class="fa-solid fa-rocket"></i> Prompt Enhancer
+                </button>
+            </div>
+
+            <!-- TAB 1: Interactive Bot Builder -->
+            <div id="tab-interactive" class="glass rounded-2xl p-6 border border-slate-800 flex flex-col gap-5">
+                <div class="flex items-center justify-between border-b border-slate-800/60 pb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-brand-500/10 border border-brand-500/30 flex items-center justify-center text-brand-400">
+                            <i class="fa-solid fa-brain"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-bold text-lg text-white">Smart Script Bot Builder</h2>
+                            <p class="text-xs text-slate-400">Fill out options step-by-step for the ultimate optimized prompt.</p>
+                        </div>
+                    </div>
+                    <span class="text-[11px] font-bold uppercase px-2.5 py-1 rounded-md bg-brand-500/10 text-brand-400 border border-brand-500/20">Dynamic Engine</span>
+                </div>
+
+                <!-- Form Fields -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Select Platform Target</label>
+                        <select id="bot-platform" onchange="updatePromptPreview()" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 text-white transition-all">
+                            <option value="ChatGPT / Claude">ChatGPT / Claude (Standard AI)</option>
+                            <option value="Midjourney">Midjourney (Ultra-Realistic Art)</option>
+                            <option value="Leonardo AI / Stable Diffusion">Stable Diffusion / Leonardo</option>
+                            <option value="Runway Gen-2 / Pika">Runway Gen-2 / Pika (AI Video)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Target Script Category</label>
+                        <select id="bot-category" onchange="updatePromptPreview()" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 text-white transition-all">
+                            <option value="YouTube Video Script">YouTube Video Script</option>
+                            <option value="Instagram Reel / Shorts Script">Instagram Reel / Shorts Script</option>
+                            <option value="AI Image Generation Prompt">AI Image Generation Prompt</option>
+                            <option value="Product Copywriting / Sales Pitch">Product Copywriting & Sales Pitch</option>
+                            <option value="Storytelling & Character Monologue">Storytelling & Character Monologue</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Script Tone</label>
+                        <select id="bot-tone" onchange="updatePromptPreview()" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 text-white transition-all">
+                            <option value="Engaging, hooks the user instantly, high retention, suspenseful">Engaging & Suspenseful (High Hook rate)</option>
+                            <option value="Extremely professional, authoritative, educational, and structured">Professional & Informative</option>
+                            <option value="Humorous, witty, funny, conversational, extremely relatable">Witty, Funny & Casual (Meme Style)</option>
+                            <option value="Dramatic, emotional, deeply motivational, poetic, slow pacing">Dramatic & Emotional (Cinematic)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Output Script Language</label>
+                        <select id="bot-lang" onchange="updatePromptPreview()" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 text-white transition-all">
+                            <option value="Hinglish (Hindi written in English alphabets with casual dynamic slang)">Hinglish (Mix of Hindi & English - Best for Reels/Shorts)</option>
+                            <option value="English (with high vocabulary, captivating phrasing, and native rhythm)">Pure English (Universal & Crisp)</option>
+                            <option value="Devanagari Hindi (शुद्ध और स्पष्ट हिंदी वाक्य संरचना के साथ)">Devanagari Hindi (Professional Hindi)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">What is your Script topic / Idea?</label>
+                    <textarea id="bot-topic" oninput="updatePromptPreview()" rows="3" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 text-white transition-all placeholder:text-slate-600" placeholder="e.g., How to earn ₹50,000 using secret AI tools in 2024 without code... / Dynamic futuristic sci-fi city with flying cars neon lighting"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Target Audience / Viewer Profile</label>
+                    <input type="text" id="bot-audience" oninput="updatePromptPreview()" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 text-white transition-all placeholder:text-slate-600" placeholder="e.g., Gen Z, College students, content creators, tech enthusiasts, beginners" value="Youth & Young Creators looking for fast growth">
+                </div>
+
+                <div class="p-4 rounded-xl bg-slate-800/40 border border-slate-700/40 flex items-start gap-3">
+                    <div class="text-brand-400 mt-0.5">
+                        <i class="fa-solid fa-circle-info"></i>
+                    </div>
+                    <div class="text-xs text-slate-400 leading-relaxed">
+                        The engine instantly generates structural prompt directives for the AI, embedding expert hook frameworks, audio-visual descriptions, retention optimization, and emotional triggers.
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: Ready templates -->
+            <div id="tab-templates" class="glass rounded-2xl p-6 border border-slate-800 flex flex-col gap-4 hidden">
+                <div class="border-b border-slate-800/60 pb-4">
+                    <h2 class="font-bold text-lg text-white">Instant Premium Templates</h2>
+                    <p class="text-xs text-slate-400">Select a pre-compiled framework designed for viral content delivery.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div onclick="loadTemplate('viral_hook')" class="cursor-pointer p-4 rounded-xl bg-slate-900/50 border border-slate-800 hover:border-brand-500/50 hover:bg-slate-900 transition-all flex flex-col justify-between h-36 group">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-bold text-brand-400 uppercase">Retention Hack</span>
+                                <span class="text-[10px] bg-red-500/10 text-red-400 px-2 py-0.5 rounded-full">Trending</span>
+                            </div>
+                            <h3 class="font-bold text-sm text-slate-200 group-hover:text-white transition-colors">The 3-Sec Hook Blueprint</h3>
+                            <p class="text-xs text-slate-500 mt-1 line-clamp-2">Create multi-layered psychological hooks that prevent swiping on TikTok, Reels, & Shorts.</p>
+                        </div>
+                        <span class="text-xs text-brand-400 flex items-center gap-1 mt-2">Use Template <i class="fa-solid fa-arrow-right text-[10px]"></i></span>
+                    </div>
+
+                    <div onclick="loadTemplate('story_brand')" class="cursor-pointer p-4 rounded-xl bg-slate-900/50 border border-slate-800 hover:border-brand-500/50 hover:bg-slate-900 transition-all flex flex-col justify-between h-36 group">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-bold text-amber-400 uppercase">Copywriting</span>
+                                <span class="text-[10px] bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded-full">High Conv.</span>
+                            </div>
+                            <h3 class="font-bold text-sm text-slate-200 group-hover:text-white transition-colors">Story-Brand Narrative Script</h3>
+                            <p class="text-xs text-slate-500 mt-1 line-clamp-2">A classic story framework focusing on problem-pain-hero-resolution to sell organic products.</p>
+                        </div>
+                        <span class="text-xs text-brand-400 flex items-center gap-1 mt-2">Use Template <i class="fa-solid fa-arrow-right text-[10px]"></i></span>
+                    </div>
+
+                    <div onclick="loadTemplate('educational')" class="cursor-pointer p-4 rounded-xl bg-slate-900/50 border border-slate-800 hover:border-brand-500/50 hover:bg-slate-900 transition-all flex flex-col justify-between h-36 group">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-bold text-teal-400 uppercase">Education</span>
+                                <span class="text-[10px] bg-teal-500/10 text-teal-400 px-2 py-0.5 rounded-full">Rich Content</span>
+                            </div>
+                            <h3 class="font-bold text-sm text-slate-200 group-hover:text-white transition-colors">Step-by-Step Educational Tutorial</h3>
+                            <p class="text-xs text-slate-500 mt-1 line-clamp-2">Breaks complex topics down with smart screen transitions, clear audio cues, and bullet point summaries.</p>
+                        </div>
+                        <span class="text-xs text-brand-400 flex items-center gap-1 mt-2">Use Template <i class="fa-solid fa-arrow-right text-[10px]"></i></span>
+                    </div>
+
+                    <div onclick="loadTemplate('sci_fi_art')" class="cursor-pointer p-4 rounded-xl bg-slate-900/50 border border-slate-800 hover:border-brand-500/50 hover:bg-slate-900 transition-all flex flex-col justify-between h-36 group">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-bold text-pink-400 uppercase">Midjourney V6</span>
+                                <span class="text-[10px] bg-pink-500/10 text-pink-400 px-2 py-0.5 rounded-full">Ultra Art</span>
+                            </div>
+                            <h3 class="font-bold text-sm text-slate-200 group-hover:text-white transition-colors">Cinematic Neo-Noir Sci-fi</h3>
+                            <p class="text-xs text-slate-500 mt-1 line-clamp-2">Generate detailed prompting syntax for breathtaking 8k realistic midjourney assets.</p>
+                        </div>
+                        <span class="text-xs text-brand-400 flex items-center gap-1 mt-2">Use Template <i class="fa-solid fa-arrow-right text-[10px]"></i></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: Prompt Enhancer -->
+            <div id="tab-enhancer" class="glass rounded-2xl p-6 border border-slate-800 flex flex-col gap-5 hidden">
+                <div class="border-b border-slate-800/60 pb-4">
+                    <h2 class="font-bold text-lg text-white">AI Prompt Enhancer & Refiner</h2>
+                    <p class="text-xs text-slate-400">Type any ordinary prompt idea below, and we will translate it into a mega prompt immediately.</p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Input Simple Raw Prompt</label>
+                    <textarea id="enhancer-raw" rows="4" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 text-white transition-all placeholder:text-slate-600" placeholder="e.g., write a video script about coding AI tools in hinglish."></textarea>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Platform Target</label>
+                        <select id="enhancer-target-engine" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-brand-500 text-white transition-all">
+                            <option value="ChatGPT-4o">ChatGPT-4o Optimizer</option>
+                            <option value="Claude-3.5-Sonnet">Claude 3.5 Sonnet Framework</option>
+                            <option value="Gemini Pro">Gemini Pro Syntax</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Output Style</label>
+                        <select id="enhancer-format" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-brand-500 text-white transition-all">
+                            <option value="Mega-Prompt Matrix">Mega-Prompt Matrix</option>
+                            <option value="Role & Persona Based Structure">Role & Persona Based Structure</option>
+                            <option value="Short Viral Video Framework">Short Viral Video Framework</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button onclick="enhanceUserPrompt()" class="w-full py-3 bg-gradient-to-r from-brand-600 to-indigo-600 text-white hover:from-brand-500 hover:to-indigo-500 transition-all rounded-xl font-bold text-sm shadow-lg shadow-brand-500/20 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Enhance & Structure Now
+                </button>
+            </div>
+
+        </section>
+
+        <!-- Right Output Panel & Interactive Terminal - Occupies 5 columns -->
+        <section class="lg:col-span-5 flex flex-col space-y-4">
+            
+            <!-- Generated Output Console / Terminal UI -->
+            <div class="glass-highlight rounded-2xl p-5 border flex-1 flex flex-col min-h-[500px]">
+                <div class="flex justify-between items-center mb-4 pb-3 border-b border-brand-500/20">
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-brand-500 animate-ping"></span>
+                        <span class="text-xs font-extrabold uppercase tracking-widest text-brand-300">Generated Mega-Prompt Engine</span>
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        <button onclick="copyGeneratedPrompt()" class="text-xs bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white transition-all px-3 py-1.5 rounded-lg border border-slate-700/80 flex items-center gap-1.5">
+                            <i id="copy-icon" class="fa-solid fa-copy"></i> <span id="copy-text">Copy Prompt</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Live Output Area -->
+                <div class="relative flex-1 bg-slate-950/80 rounded-xl p-4 border border-slate-800/80 overflow-y-auto max-h-[480px] lg:max-h-[550px]">
+                    <pre class="code-font text-[13px] text-slate-300 whitespace-pre-wrap leading-relaxed select-all" id="output-content">
+Generating prompt framework based on your dynamic input specifications...
+                    </pre>
+                </div>
+
+                <!-- Quick Copy Hint / Quick Instructions -->
+                <div class="mt-3 flex items-center justify-between text-[11px] text-slate-400 bg-slate-950/40 p-3 rounded-lg border border-slate-900">
+                    <span class="flex items-center gap-1.5">
+                        <i class="fa-solid fa-circle-check text-emerald-400"></i> Copied prompt can be directly pasted into ChatGPT!
+                    </span>
+                    <span class="font-mono">v2.0.4 PRO</span>
+                </div>
+            </div>
+
+            <!-- Bot Guide / Quick Tips Card -->
+            <div class="glass rounded-2xl p-5 border border-slate-800 flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 flex-shrink-0">
+                    <i class="fa-solid fa-lightbulb text-xl"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-sm text-white">Pro Tip: Tone & Hook Mastery</h4>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Select <b class="text-brand-300">Hinglish</b> for YouTube Shorts, Reels and TikTok to match user behavior in South Asia seamlessly. It converts casual tone perfectly.
+                    </p>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Bottom FAQ/Guide Accordion For Enhanced User Value -->
+    <footer class="border-t border-slate-800/80 py-12 px-6 mt-12 bg-slate-950/40">
+        <div class="max-w-4xl mx-auto text-center">
+            <p class="text-sm text-slate-500">Crafted with ❤️ for Creators, Writers, and Builders worldwide.</p>
+            <p class="text-xs text-slate-600 mt-2">© 2024 PromptBot AI. Dynamic automated prompt compilation tools.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts & Logic -->
+    <script>
+        let currentTab = 'interactive';
+
+        // Prompt templates variables
+        const templatesData = {
+            viral_hook: {
+                topic: "A shocking revelation about an everyday smartphone habit that drains 40% battery instantly, with three secret mitigation techniques.",
+                audience: "Mobile users, Tech lovers, everyday screen-time addicts",
+                category: "Instagram Reel / Shorts Script",
+                platform: "ChatGPT / Claude",
+                tone: "Engaging, hooks the user instantly, high retention, suspenseful",
+                lang: "Hinglish (Hindi written in English alphabets with casual dynamic slang)"
+            },
+            story_brand: {
+                topic: "A struggling copywriter who was broke, started using AI to draft client marketing copy, and made ₹2,00,000 in just 30 days.",
+                audience: "Students, freelancers, side-hustlers",
+                category: "YouTube Video Script",
+                platform: "ChatGPT / Claude",
+                tone: "Dramatic, emotional, deeply motivational, poetic, slow pacing",
+                lang: "Hinglish (Hindi written in English alphabets with casual dynamic slang)"
+            },
+            educational: {
+                topic: "How Quantum Computing actually works explained simply with zero math, using real world analogical examples of coin flips.",
+                audience: "Students, tech enthusiasts, general public",
+                category: "Product Copywriting / Sales Pitch",
+                platform: "ChatGPT / Claude",
+                tone: "Extremely professional, authoritative, educational, and structured",
+                lang: "English (with high vocabulary, captivating phrasing, and native rhythm)"
+            },
+            sci_fi_art: {
+                topic: "A cyberpunk female warrior looking down at a giant holographic cyber neon skyline from a glass penthouse balcony, rain splashing, photorealistic cinematic lighting, ultra detailed.",
+                audience: "AI art collectors, VFX lovers",
+                category: "AI Image Generation Prompt",
+                platform: "Midjourney",
+                tone: "Dramatic, emotional, deeply motivational, poetic, slow pacing",
+                lang: "English (with high vocabulary, captivating phrasing, and native rhythm)"
+            }
+        };
+
+        // Swich tabs function
+        function switchTab(tabId) {
+            currentTab = tabId;
+            // Hide all tabs
+            document.getElementById('tab-interactive').classList.add('hidden');
+            document.getElementById('tab-templates').classList.add('hidden');
+            document.getElementById('tab-enhancer').classList.add('hidden');
+
+            // Remove active classes from buttons
+            document.getElementById('tab-interactive-btn').className = "flex-1 py-2.5 px-4 rounded-lg font-semibold text-sm transition-all duration-200 flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800/40";
+            document.getElementById('tab-templates-btn').className = "flex-1 py-2.5 px-4 rounded-lg font-semibold text-sm transition-all duration-200 flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800/40";
+            document.getElementById('tab-enhancer-btn').className = "flex-1 py-2.5 px-4 rounded-lg font-semibold text-sm transition-all duration-200 flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800/40";
+
+            // Show active tab and styled active button
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            document.getElementById('tab-' + tabId + '-btn').className = "flex-1 py-2.5 px-4 rounded-lg font-semibold text-sm transition-all duration-200 flex items-center justify-center gap-2 bg-brand-600 text-white shadow-md shadow-brand-600/10";
+            
+            if (tabId === 'interactive') {
+                updatePromptPreview();
+            } else if (tabId === 'enhancer') {
+                enhanceUserPrompt();
+            }
+        }
+
+        // Compile prompt template based on interactive form states
+        function updatePromptPreview() {
+            const platform = document.getElementById('bot-platform').value;
+            const category = document.getElementById('bot-category').value;
+            const tone = document.getElementById('bot-tone').value;
+            const lang = document.getElementById('bot-lang').value;
+            const topic = document.getElementById('bot-topic').value.trim() || "[Type your topic on the left to instantly fill this slot]";
+            const audience = document.getElementById('bot-audience').value.trim() || "General Audience";
+
+            let structuredPrompt = '';
+
+            if (platform.includes("Midjourney") || platform.includes("Diffusion")) {
+                structuredPrompt = `System Persona: World-Class AI Art Prompt Engineer & Cinematic Concept Artist.
+
+Objective:
+Generate an extremely descriptive, hyper-realistic art prompt tailored precisely for ${platform}.
+
+Core Subject Material:
+"${topic}"
+
+Artistic Tone & Atmosphere:
+- Style: Cinematic, Ultra-photorealistic masterpiece, 8k resolution.
+- Emotional Tone: ${tone}.
+- Target Composition Elements: Dynamic perspective, high contrast, raytracing depth.
+- Camera & Lens: Captured on 35mm lens, f/1.8, beautiful depth of field, sharp focus, volumetric lighting.
+
+Execution Guidelines for Midjourney:
+Create a single line command containing descriptive keywords separated by commas, avoiding buzzwords like "photorealistic" directly if using Midjourney v6. Instead use lighting, depth, render version indicators.
+
+Final Midjourney Syntax Output Format:
+"/imagine prompt: ${topic}, highly atmospheric, shot on master level cinema camera, dramatic lighting, detailed composition, cinematic lighting, photorealism aesthetics, AR 16:9 --v 6.0 --style raw --ar 16:9"`;
+            } else {
+                structuredPrompt = `System Persona:
+Act as an elite scriptwriter, viral growth consultant, and narrative engineer who specializes in ${category}.
+
+Goal:
+Write a complete, highly engaging ${category} on the following Topic:
+"${topic}"
+
+Target Audience Profile:
+"${audience}"
+
+Language Delivery Style:
+- You must write the entire output in ${lang}.
+- Keep sentence structures extremely simple, punchy, and conversational.
+
+Script Execution Requirements (Strictly Follow):
+1. The Hook (0-5 seconds): Must kick off with an immediate attention disruptor or psychological pattern interrupt. Do NOT say "Hello guys!" or introduce yourself.
+2. Storytelling Tension: Build high tension, present a common enemy or painful mistake, and introduce the ultimate fix.
+3. Auditory/Visual Direction cues: Include professional [SFX: Sound Effect] and [B-Roll: Screen Action] tags at appropriate intervals to maintain retention.
+4. Conversational Flow: Keep tone as: ${tone}.
+5. Call to Action (CTA): Implement a brief, highly compelling CTA at the end without sounding desperate (e.g. "Hit follow to save your money").
+
+Let's generate a master script now based on these precise structural guidelines!`;
+            }
+
+            document.getElementById('output-content').innerText = structuredPrompt;
+        }
+
+        // Helper to load Template directly into inputs
+        function loadTemplate(templateKey) {
+            const data = templatesData[templateKey];
+            if (data) {
+                // Switch to interactive tab view
+                switchTab('interactive');
+
+                // Populate inputs
+                document.getElementById('bot-platform').value = data.platform;
+                document.getElementById('bot-category').value = data.category;
+                document.getElementById('bot-tone').value = data.tone;
+                document.getElementById('bot-lang').value = data.lang;
+                document.getElementById('bot-topic').value = data.topic;
+                document.getElementById('bot-audience').value = data.audience;
+
+                // Refresh preview
+                updatePromptPreview();
+            }
+        }
+
+        // Enhancer generator logic
+        function enhanceUserPrompt() {
+            const rawText = document.getElementById('enhancer-raw').value.trim() || "how to create passive income in 2024";
+            const targetEngine = document.getElementById('enhancer-target-engine').value;
+            const formatStyle = document.getElementById('enhancer-format').value;
+
+            const output = `System Prompt: Dynamic Mega-Prompt Optimizer Matrix [Targeting ${targetEngine}]
+
+=======================================================
+ROLE DEFINITION:
+Act as an elite master AI Engineer and professional copywriter.
+
+ORIGINAL RAW USER PROMPT:
+"${rawText}"
+
+REFINED STRUCTURED PROMPT FRAMEWORK (${formatStyle.toUpperCase()}):
+
+[CONTEXT & MISSION]
+You will work as my lead creative script architect. Your absolute core mission is to convert "${rawText}" into an incredible, highly refined master script or copy optimized for mass-market virality.
+
+[CONSTRAINTS & RULES]
+1. No generic introductory sentences like "Sure, I can write that!" Start immediately with the copy.
+2. Ensure the tone is direct, modern, conversational, and has a rhythmic flow suitable for fast speech.
+3. Embed psychological trigger points to retain viewer's interest throughout the entire presentation.
+4. Avoid corporate jargon. Use active voice.
+
+[DELIVERABLE FORMAT REQUIREMENTS]
+- Structure the output into clear segments (The Hook, The Pivot, The Value Delivery, The Ultimate CTA).
+- Add dynamic cinematic [B-ROLL CUES] and [SFX CUES] to guide audio-visual editors.
+
+Let's refine and draft this piece step-by-step.`;
+
+            document.getElementById('output-content').innerText = output;
+        }
+
+        // Clipboard copy mechanism
+        function copyGeneratedPrompt() {
+            const textToCopy = document.getElementById('output-content').innerText;
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const copyIcon = document.getElementById('copy-icon');
+                const copyText = document.getElementById('copy-text');
+                
+                copyIcon.className = "fa-solid fa-check text-emerald-400";
+                copyText.innerText = "Copied Successfully!";
+                
+                setTimeout(() => {
+                    copyIcon.className = "fa-solid fa-copy";
+                    copyText.innerText = "Copy Prompt";
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy prompt: ', err);
+            });
+        }
+
+        // Initial trigger on load
+        window.onload = function() {
+            updatePromptPreview();
+        };
+    </script>
+</body>
+</html>

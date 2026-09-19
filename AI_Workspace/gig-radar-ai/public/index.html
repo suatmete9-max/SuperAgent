@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GigRadar AI - Ultimate Lead Finder & Proposal Generator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-[#0B0F19] text-[#E2E8F0] min-h-screen font-sans">
+
+  <!-- Top Banner Nav -->
+  <nav class="border-b border-[#1E293B] bg-[#111827]/80 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center space-x-3">
+      <div class="bg-gradient-to-tr from-cyan-500 to-indigo-600 p-2.5 rounded-xl shadow-lg">
+        <i class="fa-solid fa-radar fa-spin text-white text-lg"></i>
+      </div>
+      <div>
+        <span class="text-xl font-bold tracking-wider text-white">GIG<span class="text-cyan-400">RADAR</span> AI</span>
+        <p class="text-xs text-gray-400">Upwork, Reddit, Fiverr & Twitter Tracker</p>
+      </div>
+    </div>
+    <div class="flex items-center space-x-4">
+      <button onclick="fetchLeads()" class="bg-slate-800 hover:bg-slate-700 transition px-4 py-2 rounded-lg text-sm font-semibold flex items-center space-x-2 border border-slate-700">
+        <i class="fa-solid fa-rotate-right"></i>
+        <span>Scan Live Platforms</span>
+      </button>
+      <button onclick="openConfigModal()" class="bg-cyan-500 hover:bg-cyan-600 text-slate-900 transition px-4 py-2 rounded-lg text-sm font-bold flex items-center space-x-2">
+        <i class="fa-solid fa-sliders"></i>
+        <span>Custom Profile</span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="max-w-7xl mx-auto p-6 space-y-8">
+    <!-- KPI Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div class="bg-[#111827] border border-[#1E293B] p-6 rounded-2xl relative overflow-hidden">
+        <div class="absolute -right-4 -bottom-4 text-slate-800 text-6xl font-bold opacity-20"><i class="fa-solid fa-briefcase"></i></div>
+        <h3 class="text-gray-400 text-sm font-medium uppercase tracking-wider">Active Gigs Scanned</h3>
+        <p class="text-3xl font-extrabold text-white mt-2" id="total-leads-count">0</p>
+        <span class="text-xs text-cyan-400 flex items-center mt-1"><i class="fa-solid fa-arrow-trend-up mr-1"></i> Updated just now</span>
+      </div>
+      
+      <div class="bg-[#111827] border border-[#1E293B] p-6 rounded-2xl relative overflow-hidden">
+        <div class="absolute -right-4 -bottom-4 text-slate-800 text-6xl font-bold opacity-20"><i class="fa-solid fa-rocket"></i></div>
+        <h3 class="text-gray-400 text-sm font-medium uppercase tracking-wider">Top Match Category</h3>
+        <p class="text-3xl font-extrabold text-cyan-400 mt-2" id="top-category">Crypto Tool</p>
+        <span class="text-xs text-gray-500 flex items-center mt-1">Highest budget density</span>
+      </div>
+
+      <div class="bg-[#111827] border border-[#1E293B] p-6 rounded-2xl relative overflow-hidden">
+        <div class="absolute -right-4 -bottom-4 text-slate-800 text-6xl font-bold opacity-20"><i class="fa-solid fa-paper-plane"></i></div>
+        <h3 class="text-gray-400 text-sm font-medium uppercase tracking-wider">Proposals Sent</h3>
+        <p class="text-3xl font-extrabold text-indigo-400 mt-2" id="proposals-sent-count">0</p>
+        <span class="text-xs text-indigo-400 flex items-center mt-1"><i class="fa-solid fa-circle-check mr-1"></i> Conversion active</span>
+      </div>
+
+      <div class="bg-[#111827] border border-[#1E293B] p-6 rounded-2xl relative overflow-hidden">
+        <div class="absolute -right-4 -bottom-4 text-slate-800 text-6xl font-bold opacity-20"><i class="fa-solid fa-wallet"></i></div>
+        <h3 class="text-gray-400 text-sm font-medium uppercase tracking-wider">Estimated Value</h3>
+        <p class="text-3xl font-extrabold text-green-400 mt-2" id="estimated-value">$8,000</p>
+        <span class="text-xs text-green-400 flex items-center mt-1"><i class="fa-solid fa-coins mr-1"></i> Pipeline potential</span>
+      </div>
+    </div>
+
+    <!-- Platform Filter Tabs -->
+    <div class="flex items-center justify-between border-b border-[#1E293B] pb-4">
+      <div class="flex space-x-2 bg-[#111827] p-1.5 rounded-xl border border-slate-800" id="platform-filters">
+        <button onclick="filterPlatform('All')" class="px-4 py-2 rounded-lg text-sm font-semibold bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 transition" data-platform="All">All Gigs</button>
+        <button onclick="filterPlatform('Upwork')" class="px-4 py-2 rounded-lg text-sm font-semibold text-gray-400 hover:text-white transition" data-platform="Upwork">Upwork</button>
+        <button onclick="filterPlatform('Fiverr')" class="px-4 py-2 rounded-lg text-sm font-semibold text-gray-400 hover:text-white transition" data-platform="Fiverr">Fiverr</button>
+        <button onclick="filterPlatform('Twitter')" class="px-4 py-2 rounded-lg text-sm font-semibold text-gray-400 hover:text-white transition" data-platform="Twitter">Twitter</button>
+        <button onclick="filterPlatform('Reddit')" class="px-4 py-2 rounded-lg text-sm font-semibold text-gray-400 hover:text-white transition" data-platform="Reddit">Reddit</button>
+      </div>
+      <div class="text-xs text-gray-400">
+        Current Keyword Matrix: <span class="text-cyan-300" id="keywords-badge">Crypto, Dashboard, Web, Software</span>
+      </div>
+    </div>
+
+    <!-- Main Grid: Live Gigs & Quick Proposal Generator -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      
+      <!-- Gigs Stream (Left 2 Columns) -->
+      <div class="lg:col-span-2 space-y-6">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-bold tracking-wide text-white flex items-center space-x-2">
+            <i class="fa-solid fa-bolt text-amber-400"></i>
+            <span>Live Opportunities Stream</span>
+          </h2>
+          <span class="text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 font-semibold border border-emerald-500/20">AI Match Active</span>
+        </div>
+
+        <div class="space-y-4" id="gigs-container">
+          <!-- Dynamic Cards Added Here -->
+        </div>
+      </div>
+
+      <!-- Side Panel: AI Pitch Workspace & Target Insights -->
+      <div class="space-y-6">
+        <div class="bg-[#111827] border border-[#1E293B] rounded-2xl p-6 relative overflow-hidden">
+          <div class="absolute top-0 right-0 h-1 w-full bg-gradient-to-r from-cyan-500 to-indigo-600"></div>
+          <h2 class="text-lg font-bold text-white mb-4 flex items-center space-x-2">
+            <i class="fa-solid fa-wand-magic-sparkles text-cyan-400"></i>
+            <span>AI Pitch Generator</span>
+          </h2>
+          <p class="text-xs text-gray-400 mb-6">Select any job card on the left to immediately auto-generate an optimized cold proposal optimized with modern persuasion tactics.</p>
+          
+          <div class="space-y-4">
+            <div>
+              <label class="text-xs text-gray-400 font-medium">Selected Gig</label>
+              <input id="pitch-job-title" type="text" class="w-full bg-[#0B0F19] border border-slate-700 rounded-lg p-2.5 text-xs text-gray-300 mt-1" placeholder="Click a job to load details..." readonly>
+            </div>
+
+            <div>
+              <label class="text-xs text-gray-400 font-medium flex justify-between items-center">
+                <span>Generated Cover Letter</span>
+                <span id="copy-toast" class="text-emerald-400 font-bold hidden">Copied!</span>
+              </label>
+              <textarea id="pitch-proposal-text" rows="10" class="w-full bg-[#0B0F19] border border-slate-700 rounded-lg p-3 text-xs text-gray-300 mt-1 font-mono leading-relaxed" placeholder="Your customized high-converting response will appear here..."></textarea>
+            </div>
+
+            <div class="flex space-x-2">
+              <button onclick="copyProposal()" class="flex-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 transition py-2.5 rounded-lg text-xs font-bold text-white flex items-center justify-center space-x-2">
+                <i class="fa-solid fa-copy"></i>
+                <span>Copy to Clipboard</span>
+              </button>
+              <button onclick="addToPipelineFromPitch()" class="flex-1 bg-cyan-500 hover:bg-cyan-600 text-slate-900 transition py-2.5 rounded-lg text-xs font-extrabold flex items-center justify-center space-x-2">
+                <i class="fa-solid fa-plus-circle"></i>
+                <span>Track in CRM</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Smart Matching Criteria Insights -->
+        <div class="bg-[#111827] border border-[#1E293B] rounded-2xl p-6">
+          <h3 class="text-sm font-bold text-white mb-3 flex items-center space-x-2">
+            <i class="fa-solid fa-chart-line text-emerald-400"></i>
+            <span>Freelance SEO & Keywords Matrix</span>
+          </h3>
+          <p class="text-xs text-gray-400 mb-4">Customize these values inside settings to let the background scrapper rank jobs that match your expertise.</p>
+          <div class="flex flex-wrap gap-2" id="settings-badges-container">
+            <!-- Badges updated dynamically -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pipeline / Kanban CRM Board -->
+    <div class="bg-[#111827] border border-[#1E293B] rounded-3xl p-8">
+      <div class="flex items-center justify-between mb-8">
+        <div>
+          <h2 class="text-2xl font-black text-white tracking-wide flex items-center space-x-3">
+            <span class="p-2 bg-indigo-500/10 text-indigo-400 rounded-xl border border-indigo-500/20"><i class="fa-solid fa-list-check"></i></span>
+            <span>Lead Outreach CRM Pipeline</span>
+          </h2>
+          <p class="text-sm text-gray-400 mt-1">Drag-and-drop mechanics simulation: Select column status updates to route leads from prospect to payment.</p>
+        </div>
+        <div class="flex space-x-2">
+          <span class="text-xs px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-gray-400 flex items-center space-x-1">
+            <i class="fa-solid fa-info-circle"></i>
+            <span>Auto Sync Active</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <!-- Column: Discovered -->
+        <div class="bg-[#0B0F19] p-4 rounded-2xl border border-slate-800/80">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+            <span class="text-xs font-extrabold uppercase text-gray-400 tracking-wider flex items-center space-x-2">
+              <span class="w-2.5 h-2.5 bg-yellow-500 rounded-full inline-block"></span>
+              <span>Discovered</span>
+            </span>
+            <span class="text-xs bg-slate-800 text-gray-300 font-bold px-2 py-0.5 rounded-md" id="count-discovered">0</span>
+          </div>
+          <div class="space-y-3 min-h-[150px]" id="col-discovered" ondragover="allowDrop(event)" ondrop="drop(event, 'discovered')"></div>
+        </div>
+
+        <!-- Column: Shortlisted -->
+        <div class="bg-[#0B0F19] p-4 rounded-2xl border border-slate-800/80">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+            <span class="text-xs font-extrabold uppercase text-gray-400 tracking-wider flex items-center space-x-2">
+              <span class="w-2.5 h-2.5 bg-cyan-400 rounded-full inline-block"></span>
+              <span>Shortlisted</span>
+            </span>
+            <span class="text-xs bg-slate-800 text-gray-300 font-bold px-2 py-0.5 rounded-md" id="count-shortlisted">0</span>
+          </div>
+          <div class="space-y-3 min-h-[150px]" id="col-shortlisted" ondragover="allowDrop(event)" ondrop="drop(event, 'shortlisted')"></div>
+        </div>
+
+        <!-- Column: Proposal Sent -->
+        <div class="bg-[#0B0F19] p-4 rounded-2xl border border-slate-800/80">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+            <span class="text-xs font-extrabold uppercase text-gray-400 tracking-wider flex items-center space-x-2">
+              <span class="w-2.5 h-2.5 bg-indigo-500 rounded-full inline-block"></span>
+              <span>Applied</span>
+            </span>
+            <span class="text-xs bg-slate-800 text-gray-300 font-bold px-2 py-0.5 rounded-md" id="count-applied">0</span>
+          </div>
+          <div class="space-y-3 min-h-[150px]" id="col-applied" ondragover="allowDrop(event)" ondrop="drop(event, 'applied')"></div>
+        </div>
+
+        <!-- Column: Closed Won -->
+        <div class="bg-[#0B0F19] p-4 rounded-2xl border border-slate-800/80">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+            <span class="text-xs font-extrabold uppercase text-gray-400 tracking-wider flex items-center space-x-2">
+              <span class="w-2.5 h-2.5 bg-emerald-500 rounded-full inline-block"></span>
+              <span>Won</span>
+            </span>
+            <span class="text-xs bg-slate-800 text-gray-300 font-bold px-2 py-0.5 rounded-md" id="count-won">0</span>
+          </div>
+          <div class="space-y-3 min-h-[150px]" id="col-won" ondragover="allowDrop(event)" ondrop="drop(event, 'won')"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Config / Profile Modal -->
+  <div id="config-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+    <div class="bg-[#111827] border border-[#1E293B] rounded-3xl p-8 max-w-lg w-full mx-4 shadow-2xl relative">
+      <button onclick="closeConfigModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-lg">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <h3 class="text-xl font-black text-white mb-2">Profile & Preference Settings</h3>
+      <p class="text-xs text-gray-400 mb-6">Configure your specialized skills, portfolio assets, and match keywords to generate hyper-focused proposals.</p>
+
+      <div class="space-y-4">
+        <div>
+          <label class="text-xs text-gray-400 font-bold uppercase tracking-wider">Developer/Company Name</label>
+          <input id="cfg-name" type="text" class="w-full bg-[#0B0F19] border border-slate-700 rounded-lg p-3 text-sm text-gray-200 mt-1 focus:border-cyan-500 outline-none">
+        </div>
+        <div>
+          <label class="text-xs text-gray-400 font-bold uppercase tracking-wider">Specialized Skills (Comma Separated)</label>
+          <input id="cfg-skills" type="text" class="w-full bg-[#0B0F19] border border-slate-700 rounded-lg p-3 text-sm text-gray-200 mt-1 focus:border-cyan-500 outline-none">
+        </div>
+        <div>
+          <label class="text-xs text-gray-400 font-bold uppercase tracking-wider">Portfolio URL</label>
+          <input id="cfg-portfolio" type="text" class="w-full bg-[#0B0F19] border border-slate-700 rounded-lg p-3 text-sm text-gray-200 mt-1 focus:border-cyan-500 outline-none">
+        </div>
+        <div>
+          <label class="text-xs text-gray-400 font-bold uppercase tracking-wider">Search Keywords Matrix (Comma Separated)</label>
+          <input id="cfg-keywords" type="text" class="w-full bg-[#0B0F19] border border-slate-700 rounded-lg p-3 text-sm text-gray-200 mt-1 focus:border-cyan-500 outline-none">
+        </div>
+
+        <button onclick="saveConfig()" class="w-full bg-cyan-500 hover:bg-cyan-600 text-slate-900 font-extrabold py-3 rounded-lg mt-4 transition">
+          Save Settings & Reload Feeds
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

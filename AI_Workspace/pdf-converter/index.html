@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ApexPDF | Free All-in-One Client-Side PDF Tools</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            900: '#4c1d95',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- JSZip for PDF to Images (Zipping multiple images) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <!-- PDF-Lib for generating & merging PDFs -->
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <!-- PDF.js for reading PDFs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <style>
+        .tool-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -10px rgba(124, 58, 237, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans">
+
+    <!-- Header -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="showHome()">
+                <div class="bg-gradient-to-tr from-brand-500 to-indigo-500 p-2.5 rounded-xl shadow-lg shadow-brand-500/20">
+                    <i class="fa-solid fa-file-pdf text-xl text-white"></i>
+                </div>
+                <span class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-200 to-brand-400 bg-clip-text text-transparent">
+                    ApexPDF
+                </span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button onclick="showHome()" class="text-sm font-medium text-slate-300 hover:text-white transition-colors">
+                    <i class="fa-solid fa-house mr-1"></i> Home
+                </button>
+                <span class="h-4 w-px bg-slate-800"></span>
+                <span class="px-3 py-1 text-xs font-semibold text-brand-400 bg-brand-500/10 rounded-full border border-brand-500/20">
+                    <i class="fa-solid fa-shield-halved mr-1"></i> 100% Offline & Secure
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        
+        <!-- Home Dashboard -->
+        <div id="home-panel" class="space-y-12 animate-fade-in">
+            <div class="text-center space-y-4 max-w-3xl mx-auto">
+                <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight text-white">
+                    Free, Secure & <span class="text-brand-500">Instant</span> PDF Utilities
+                </h1>
+                <p class="text-lg text-slate-400">
+                    Convert, split, merge, and extract data from your PDFs securely in your browser. Your files never touch any server.
+                </p>
+            </div>
+
+            <!-- Tool Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Card: Images to PDF -->
+                <div onclick="switchTool('img-to-pdf')" class="tool-card p-6 bg-slate-800/50 rounded-2xl border border-slate-700/50 hover:border-brand-500/50 transition-all duration-300 cursor-pointer flex flex-col justify-between group">
+                    <div>
+                        <div class="h-12 w-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-images text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">Images to PDF</h3>
+                        <p class="text-sm text-slate-400 leading-relaxed">
+                            Convert multiple JPG, PNG, or WebP images into a single, perfectly formatted PDF file.
+                        </p>
+                    </div>
+                    <div class="mt-6 flex items-center text-sm font-semibold text-emerald-400">
+                        Launch Tool <i class="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                    </div>
+                </div>
+
+                <!-- Card: PDF to Images -->
+                <div onclick="switchTool('pdf-to-img')" class="tool-card p-6 bg-slate-800/50 rounded-2xl border border-slate-700/50 hover:border-brand-500/50 transition-all duration-300 cursor-pointer flex flex-col justify-between group">
+                    <div>
+                        <div class="h-12 w-12 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-file-image text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">PDF to Images</h3>
+                        <p class="text-sm text-slate-400 leading-relaxed">
+                            Extract pages from any PDF document and download them as individual high-quality images.
+                        </p>
+                    </div>
+                    <div class="mt-6 flex items-center text-sm font-semibold text-blue-400">
+                        Launch Tool <i class="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                    </div>
+                </div>
+
+                <!-- Card: Text to PDF -->
+                <div onclick="switchTool('text-to-pdf')" class="tool-card p-6 bg-slate-800/50 rounded-2xl border border-slate-700/50 hover:border-brand-500/50 transition-all duration-300 cursor-pointer flex flex-col justify-between group">
+                    <div>
+                        <div class="h-12 w-12 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-font text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">Text to PDF</h3>
+                        <p class="text-sm text-slate-400 leading-relaxed">
+                            Type or upload raw text, style it, and quickly save it as a high-fidelity PDF document.
+                        </p>
+                    </div>
+                    <div class="mt-6 flex items-center text-sm font-semibold text-purple-400">
+                        Launch Tool <i class="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                    </div>
+                </div>
+
+                <!-- Card: PDF to Text -->
+                <div onclick="switchTool('pdf-to-text')" class="tool-card p-6 bg-slate-800/50 rounded-2xl border border-slate-700/50 hover:border-brand-500/50 transition-all duration-300 cursor-pointer flex flex-col justify-between group">
+                    <div>
+                        <div class="h-12 w-12 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-file-lines text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">PDF to Text</h3>
+                        <p class="text-sm text-slate-400 leading-relaxed">
+                            Extract selectable text content from any PDF file instantly with zero data loss.
+                        </p>
+                    </div>
+                    <div class="mt-6 flex items-center text-sm font-semibold text-amber-400">
+                        Launch Tool <i class="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                    </div>
+                </div>
+
+                <!-- Card: Merge PDFs -->
+                <div onclick="switchTool('merge-pdf')" class="tool-card p-6 bg-slate-800/50 rounded-2xl border border-slate-700/50 hover:border-brand-500/50 transition-all duration-300 cursor-pointer flex flex-col justify-between group">
+                    <div>
+                        <div class="h-12 w-12 rounded-xl bg-pink-500/10 text-pink-400 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-cubes text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">Merge PDFs</h3>
+                        <p class="text-sm text-slate-400 leading-relaxed">
+                            Combine multiple PDF files in your preferred sequence into one unified document.
+                        </p>
+                    </div>
+                    <div class="mt-6 flex items-center text-sm font-semibold text-pink-400">
+                        Launch Tool <i class="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Workspace Wrapper -->
+        <div id="tool-panel" class="hidden space-y-6 animate-fade-in">
+            <!-- Back Button and Title Bar -->
+            <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+                <button onclick="showHome()" class="px-4 py-2 bg-slate-800 text-slate-200 rounded-xl hover:bg-slate-700 transition-colors flex items-center text-sm font-medium">
+                    <i class="fa-solid fa-arrow-left mr-2"></i> Back to Tools
+                </button>
+                <h2 id="active-tool-title" class="text-2xl font-bold text-white flex items-center gap-3">
+                    <!-- Dynamic Title -->
+                </h2>
+            </div>
+
+            <!-- Workspaces for Different Tools -->
+            
+            <!-- 1. IMAGE TO PDF -->
+            <div id="workspace-img-to-pdf" class="workspace hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="border-2 border-dashed border-slate-700 hover:border-emerald-500 rounded-2xl p-8 text-center cursor-pointer bg-slate-800/20 hover:bg-slate-800/50 transition-all" onclick="document.getElementById('input-img-to-pdf').click()">
+                            <input type="file" id="input-img-to-pdf" multiple accept="image/png, image/jpeg, image/webp" class="hidden" onchange="handleImgToPdfFiles(this.files)">
+                            <i class="fa-solid fa-cloud-arrow-up text-4xl text-emerald-400 mb-4"></i>
+                            <p class="text-lg font-semibold text-white">Drag & Drop images or click to browse</p>
+                            <p class="text-sm text-slate-400 mt-1">Supports PNG, JPG, JPEG, WEBP</p>
+                        </div>
+                        <!-- Selected Files Preview Grid -->
+                        <div id="img-preview-container" class="grid grid-cols-2 sm:grid-cols-4 gap-4"></div>
+                    </div>
+                    <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 space-y-6 h-fit">
+                        <h3 class="text-lg font-bold text-white">Convert Configuration</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Page Margin</label>
+                                <select id="img-margin" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-slate-200 focus:outline-none focus:border-brand-500">
+                                    <option value="0">No Margin</option>
+                                    <option value="20" selected>Small Margin (20px)</option>
+                                    <option value="40">Large Margin (40px)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Page Size</label>
+                                <select id="img-page-size" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-slate-200 focus:outline-none focus:border-brand-500">
+                                    <option value="a4" selected>A4 Standard</option>
+                                    <option value="letter">US Letter</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button onclick="generatePdfFromImages()" class="w-full py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-circle-down"></i> Create & Download PDF
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. PDF TO IMAGES -->
+            <div id="workspace-pdf-to-img" class="workspace hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="border-2 border-dashed border-slate-700 hover:border-blue-500 rounded-2xl p-8 text-center cursor-pointer bg-slate-800/20 hover:bg-slate-800/50 transition-all" onclick="document.getElementById('input-pdf-to-img').click()">
+                            <input type="file" id="input-pdf-to-img" accept="application/pdf" class="hidden" onchange="handlePdfToImgFile(this.files[0])">
+                            <i class="fa-solid fa-file-pdf text-4xl text-blue-400 mb-4"></i>
+                            <p class="text-lg font-semibold text-white">Select PDF to convert to Images</p>
+                            <p class="text-sm text-slate-400 mt-1">Extracts pages and prepares them for download</p>
+                        </div>
+                        <!-- PDF page extraction preview -->
+                        <div id="pdf-pages-preview" class="grid grid-cols-2 sm:grid-cols-3 gap-4"></div>
+                    </div>
+                    <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 space-y-6 h-fit">
+                        <h3 class="text-lg font-bold text-white">Extraction Panel</h3>
+                        <div id="pdf-info-container" class="space-y-4 text-sm text-slate-300">
+                            <p>No file selected.</p>
+                        </div>
+                        <button id="btn-extract-images" disabled onclick="downloadPdfImages()" class="w-full py-4 bg-blue-500 hover:bg-blue-600 disabled:opacity-40 disabled:hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-file-zipper"></i> Download All Pages (.zip)
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. TEXT TO PDF -->
+            <div id="workspace-text-to-pdf" class="workspace hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <label class="text-sm font-bold text-slate-300">Compose Content</label>
+                            <input type="file" id="text-file-import" accept=".txt" class="hidden" onchange="importTxtFile(this)">
+                            <button onclick="document.getElementById('text-file-import').click()" class="text-xs px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-brand-400 rounded-lg transition-colors">
+                                <i class="fa-solid fa-file-import mr-1"></i> Import .txt File
+                            </button>
+                        </div>
+                        <textarea id="text-to-pdf-content" rows="16" class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-5 text-slate-200 font-mono text-sm focus:outline-none focus:border-brand-500" placeholder="Start writing or paste text content here..."></textarea>
+                    </div>
+                    <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 space-y-6 h-fit">
+                        <h3 class="text-lg font-bold text-white">PDF Settings</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Font Style</label>
+                                <select id="text-font" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-slate-200 focus:outline-none focus:border-brand-500">
+                                    <option value="Helvetica" selected>Helvetica Standard</option>
+                                    <option value="TimesRoman">Times New Roman</option>
+                                    <option value="Courier">Courier Monospace</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Font Size</label>
+                                <select id="text-size" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-slate-200 focus:outline-none focus:border-brand-500">
+                                    <option value="10">10pt (Compact)</option>
+                                    <option value="12" selected>12pt (Standard)</option>
+                                    <option value="14">14pt (Readable)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button onclick="convertTextToPdf()" class="w-full py-4 bg-purple-500 hover:bg-purple-600 text-white font-bold rounded-xl shadow-lg shadow-purple-500/20 transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-file-arrow-down"></i> Generate PDF Document
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. PDF TO TEXT -->
+            <div id="workspace-pdf-to-text" class="workspace hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="border-2 border-dashed border-slate-700 hover:border-amber-500 rounded-2xl p-8 text-center cursor-pointer bg-slate-800/20 hover:bg-slate-800/50 transition-all" onclick="document.getElementById('input-pdf-to-text').click()">
+                            <input type="file" id="input-pdf-to-text" accept="application/pdf" class="hidden" onchange="extractTextFromPdf(this.files[0])">
+                            <i class="fa-solid fa-file-lines text-4xl text-amber-400 mb-4"></i>
+                            <p class="text-lg font-semibold text-white">Select PDF to Extract Text</p>
+                            <p class="text-sm text-slate-400 mt-1">Processes text layers instantly in your browser</p>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between">
+                                <label class="text-sm font-bold text-slate-300">Extracted Text Output</label>
+                                <button onclick="copyExtractedText()" class="text-xs px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-amber-400 rounded-lg transition-colors">
+                                    <i class="fa-solid fa-copy mr-1"></i> Copy Text
+                                </button>
+                            </div>
+                            <textarea id="extracted-text-area" rows="12" readonly class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-5 text-slate-300 font-mono text-sm focus:outline-none" placeholder="Extracted text content will appear here..."></textarea>
+                        </div>
+                    </div>
+                    <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 space-y-6 h-fit">
+                        <h3 class="text-lg font-bold text-white">Extraction Panel</h3>
+                        <div id="text-extraction-status" class="space-y-4 text-sm text-slate-300">
+                            <p>No extraction performed yet.</p>
+                        </div>
+                        <button onclick="downloadExtractedText()" class="w-full py-4 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl shadow-lg shadow-amber-500/20 transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-download"></i> Download as .txt File
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. MERGE PDFS -->
+            <div id="workspace-merge-pdf" class="workspace hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="border-2 border-dashed border-slate-700 hover:border-pink-500 rounded-2xl p-8 text-center cursor-pointer bg-slate-800/20 hover:bg-slate-800/50 transition-all" onclick="document.getElementById('input-merge-pdf').click()">
+                            <input type="file" id="input-merge-pdf" multiple accept="application/pdf" class="hidden" onchange="handleMergePdfFiles(this.files)">
+                            <i class="fa-solid fa-cubes text-4xl text-pink-400 mb-4"></i>
+                            <p class="text-lg font-semibold text-white">Upload Multiple PDFs to Merge</p>
+                            <p class="text-sm text-slate-400 mt-1">Select 2 or more documents to combine</p>
+                        </div>
+                        <!-- PDF Order List -->
+                        <div class="space-y-3">
+                            <h4 class="text-sm font-bold text-slate-300">Merge Queue (Reorder with arrows)</h4>
+                            <div id="merge-queue" class="space-y-2"></div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 space-y-6 h-fit">
+                        <h3 class="text-lg font-bold text-white">Merge Operations</h3>
+                        <p class="text-sm text-slate-400">The PDFs will be stitched together sequentially from top to bottom based on the queue order.</p>
+                        <button onclick="executeMergePdfs()" class="w-full py-4 bg-pink-500 hover:bg-pink-600 text-white font-bold rounded-xl shadow-lg shadow-pink-500/20 transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-object-group"></i> Execute PDF Merge
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Global Toast / Notifications -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-10 opacity-0 transition-all duration-300 bg-slate-800 border-l-4 border-brand-500 p-4 rounded-r-xl shadow-2xl flex items-center gap-3 max-w-sm">
+        <div class="text-brand-400" id="toast-icon"><i class="fa-solid fa-circle-info"></i></div>
+        <p class="text-sm text-slate-200" id="toast-message"></p>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 py-8 bg-slate-950 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p class="text-sm text-slate-500">
+                &copy; 2025 ApexPDF suite. Powered by PDFLib & PDFJS-dist. Client-Side Only.
+            </p>
+            <div class="flex space-x-6 text-sm text-slate-400">
+                <span class="hover:text-white cursor-pointer">Privacy Policy</span>
+                <span class="hover:text-white cursor-pointer">Offline Capability</span>
+                <span class="hover:text-white cursor-pointer">Zero Server Storage</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Configure PDFJS-dist
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+
+        // Application State
+        let currentTool = null;
+        let imageToPdfFiles = [];
+        let activePdfToImgFile = null;
+        let pdfToImgPages = []; // Array of { number, dataUrl }
+        let mergePdfFiles = []; // Array of file items { name, size, data }
+
+        // Navigation & Layout Handling
+        function switchTool(toolId) {
+            document.getElementById('home-panel').classList.add('hidden');
+            document.getElementById('tool-panel').classList.remove('hidden');
+            
+            // Hide all workspaces
+            document.querySelectorAll('.workspace').forEach(ws => ws.classList.add('hidden'));
+            
+            // Show requested workspace
+            document.getElementById(`workspace-${toolId}`).classList.remove('hidden');
+            
+            currentTool = toolId;
+            setupToolTitle(toolId);
+        }
+
+        function showHome() {
+            document.getElementById('tool-panel').classList.add('hidden');
+            document.getElementById('home-panel').classList.remove('hidden');
+            currentTool = null;
+            resetState();
+        }
+
+        function setupToolTitle(toolId) {
+            const titleEl = document.getElementById('active-tool-title');
+            let icon = '';
+            let text = '';
+            switch (toolId) {
+                case 'img-to-pdf':
+                    icon = '<i class="fa-solid fa-images text-emerald-400"></i>';
+                    text = 'Images to PDF Converter';
+                    break;
+                case 'pdf-to-img':
+                    icon = '<i class="fa-solid fa-file-image text-blue-400"></i>';
+                    text = 'PDF to Image Extractor';
+                    break;
+                case 'text-to-pdf':
+                    icon = '<i class="fa-solid fa-font text-purple-400"></i>';
+                    text = 'Plain Text to PDF Maker';
+                    break;
+                case 'pdf-to-text':
+                    icon = '<i class="fa-solid fa-file-lines text-amber-400"></i>';
+                    text = 'PDF Text Harvester';
+                    break;
+                case 'merge-pdf':
+                    icon = '<i class="fa-solid fa-cubes text-pink-400"></i>';
+                    text = 'PDF Combiner / Merger';
+                    break;
+            }
+            titleEl.innerHTML = `${icon} ${text}`;
+        }
+
+        function resetState() {
+            imageToPdfFiles = [];
+            activePdfToImgFile = null;
+            pdfToImgPages = [];
+            mergePdfFiles = [];
+            
+            // Clear inputs & dynamic lists
+            document.getElementById('img-preview-container').innerHTML = '';
+            document.getElementById('pdf-pages-preview').innerHTML = '';
+            document.getElementById('pdf-info-container').innerHTML = '<p>No file selected.</p>';
+            document.getElementById('btn-extract-images').disabled = true;
+            document.getElementById('text-to-pdf-content').value = '';
+            document.getElementById('extracted-text-area').value = '';
+            document.getElementById('text-extraction-status').innerHTML = '<p>No extraction performed yet.</p>';
+            document.getElementById('merge-queue').innerHTML = '';
+            
+            // Reset DOM value fields
+            document.getElementById('input-img-to-pdf').value = '';
+            document.getElementById('input-pdf-to-img').value = '';
+            document.getElementById('input-pdf-to-text').value = '';
+            document.getElementById('input-merge-pdf').value = '';
+        }
+
+        // Toast Notification System
+        function triggerToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-message');
+            const toastIcon = document.getElementById('toast-icon');
+            
+            toastMsg.innerText = message;
+            
+            if (type === 'success') {
+                toast.className = "fixed bottom-5 right-5 z-50 transform translate-y-0 opacity-100 transition-all duration-300 bg-emerald-900 border-l-4 border-emerald-500 p-4 rounded-r-xl shadow-2xl flex items-center gap-3 max-w-sm";
+                toastIcon.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-400"></i>';
+            } else if (type === 'error') {
+                toast.className = "fixed bottom-5 right-5 z-50 transform translate-y-0 opacity-100 transition-all duration-300 bg-red-950 border-l-4 border-red-500 p-4 rounded-r-xl shadow-2xl flex items-center gap-3 max-w-sm";
+                toastIcon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-400"></i>';
+            } else {
+                toast.className = "fixed bottom-5 right-5 z-50 transform translate-y-0 opacity-100 transition-all duration-300 bg-slate-800 border-l-4 border-brand-500 p-4 rounded-r-xl shadow-2xl flex items-center gap-3 max-w-sm";
+                toastIcon.innerHTML = '<i class="fa-solid fa-circle-info text-brand-400"></i>';
+            }
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-10', 'opacity-0');
+            }, 4000);
+        }
+
+        // ===================================
+        // TOOL 1: IMAGES TO PDF
+        // ===================================
+        function handleImgToPdfFiles(files) {
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    imageToPdfFiles.push({ name: file.name, data: e.target.result });
+                    renderImagePreviews();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function renderImagePreviews() {
+            const container = document.getElementById('img-preview-container');
+            container.innerHTML = '';
+            imageToPdfFiles.forEach((file, index) => {
+                const card = document.createElement('div');
+                card.className = "relative bg-slate-900 border border-slate-800 rounded-xl p-2 group flex flex-col items-center justify-center";
+                card.innerHTML = `
+                    <img src="${file.data}" class="h-24 w-full object-cover rounded-lg mb-2">
+                    <span class="text-xs text-slate-400 truncate w-full text-center px-1">${file.name}</span>
+                    <button onclick="removeImage(${index})" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1.5 text-xs hover:bg-red-600 shadow-md opacity-0 group-hover:opacity-100 transition-opacity">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function removeImage(index) {
+            imageToPdfFiles.splice(index, 1);
+            renderImagePreviews();
+        }
+
+        async function generatePdfFromImages() {
+            if (imageToPdfFiles.length === 0) {
+                triggerToast("Please select images to convert first.", "error");
+                return;
+            }
+            
+            triggerToast("Converting images to high quality PDF...", "info");
+
+            try {
+                const { PDFDocument, rgb } = PDFLib;
+                const pdfDoc = await PDFDocument.create();
+                
+                const margin = parseInt(document.getElementById('img-margin').value, 10);
+                const pageSizeOption = document.getElementById('img-page-size').value;
+                const dims = pageSizeOption === 'a4' ? [595.28, 841.89] : [612.0, 792.0];
+                
+                for (const imgObj of imageToPdfFiles) {
+                    const page = pdfDoc.addPage(dims);
+                    const { width: pageW, height: pageH } = page.getSize();
+                    
+                    let image;
+                    if (imgObj.data.startsWith('data:image/jpeg') || imgObj.data.startsWith('data:image/jpg')) {
+                        image = await pdfDoc.embedJpg(imgObj.data);
+                    } else if (imgObj.data.startsWith('data:image/png')) {
+                        image = await pdfDoc.embedPng(imgObj.data);
+                    } else {
+                        // Standard PNG / fallback to canvas conversion if webp or other formats
+                        image = await convertImageToJpgFormat(imgObj.data, pdfDoc);
+                    }
+                    
+                    const scaleWidth = pageW - margin * 2;
+                    const scaleHeight = pageH - margin * 2;
+                    const imageRatio = image.width / image.height;
+                    const containerRatio = scaleWidth / scaleHeight;
+                    
+                    let renderW = scaleWidth;
+                    let renderH = scaleHeight;
+                    
+                    if (imageRatio > containerRatio) {
+                        renderH = scaleWidth / imageRatio;
+                    } else {
+                        renderW = scaleHeight * imageRatio;
+                    }
+                    
+                    const xCoord = margin + (scaleWidth - renderW) / 2;
+                    const yCoord = margin + (scaleHeight - renderH) / 2;
+                    
+                    page.drawImage(image, {
+                        x: xCoord,
+                        y: yCoord,
+                        width: renderW,
+                        height: renderH,
+                    });
+                }
+                
+                const pdfBytes = await pdfDoc.save();
+                downloadBlob(pdfBytes, 'ApexPDF-Converted-Images.pdf', 'application/pdf');
+                triggerToast("PDF conversion succeeded!", "success");
+            } catch (err) {
+                console.error(err);
+                triggerToast("An error occurred during PDF creation.", "error");
+            }
+        }
+
+        function convertImageToJpgFormat(dataUrl, pdfDoc) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = async function() {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    const convertedDataUrl = canvas.toDataURL('image/jpeg');
+                    const image = await pdfDoc.embedJpg(convertedDataUrl);
+                    resolve(image);
+                };
+                img.onerror = reject;
+                img.src = dataUrl;
+            });
+        }
+
+        // ===================================
+        // TOOL 2: PDF TO IMAGES
+        // ===================================
+        async function handlePdfToImgFile(file) {
+            if (!file) return;
+            activePdfToImgFile = file;
+            pdfToImgPages = [];
+            
+            const container = document.getElementById('pdf-pages-preview');
+            container.innerHTML = '<div class="col-span-full py-8 text-center text-slate-400"><i class="fa-solid fa-spinner animate-spin mr-2"></i> Extracting PDF pages...</div>';
+            
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const typedarray = new Uint8Array(e.target.result);
+                    const pdf = await pdfjsLib.getDocument(typedarray).promise;
+                    
+                    document.getElementById('pdf-info-container').innerHTML = `
+                        <div class="space-y-2">
+                            <p><span class="font-bold text-slate-200">Filename:</span> <span class="text-xs font-mono bg-slate-900 px-2 py-1 rounded">${file.name}</span></p>
+                            <p><span class="font-bold text-slate-200">Total Pages:</span> ${pdf.numPages}</p>
+                            <p><span class="font-bold text-slate-200">File Size:</span> ${(file.size / (1024 * 1024)).toFixed(2)} MB</p>
+                        </div>
+                    `;
+                    
+                    container.innerHTML = '';
+                    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                        const page = await pdf.getPage(pageNum);
+                        const viewport = page.getViewport({ scale: 1.5 });
+                        const canvas = document.createElement('canvas');
+                        const context = canvas.getContext('2d');
+                        canvas.height = viewport.height;
+                        canvas.width = viewport.width;
+                        
+                        await page.render({ canvasContext: context, viewport: viewport }).promise;
+                        const dataUrl = canvas.toDataURL('image/png');
+                        
+                        pdfToImgPages.push({ number: pageNum, dataUrl });
+                        
+                        const card = document.createElement('div');
+                        card.className = "relative bg-slate-900 border border-slate-800 rounded-xl p-2 group flex flex-col items-center justify-center";
+                        card.innerHTML = `
+                            <img src="${dataUrl}" class="h-36 w-full object-contain rounded mb-2 bg-white">
+                            <span class="text-xs font-semibold text-slate-400">Page ${pageNum}</span>
+                        `;
+                        container.appendChild(card);
+                    }
+                    
+                    document.getElementById('btn-extract-images').disabled = false;
+                    triggerToast(`Loaded and extracted ${pdf.numPages} pages!`, "success");
+                } catch (err) {
+                    console.error(err);
+                    container.innerHTML = '<div class="col-span-full py-8 text-center text-red-400"><i class="fa-solid fa-circle-xmark mr-2"></i> Failed to read PDF. Make sure it is not password-protected.</div>';
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        async function downloadPdfImages() {
+            if (pdfToImgPages.length === 0) return;
+            
+            triggerToast("Generating image archives...", "info");
+            const zip = new JSZip();
+            
+            pdfToImgPages.forEach((pageObj) => {
+                const base64Data = pageObj.dataUrl.replace(/^data:image\/(png|jpg);base64,/, "");
+                zip.file(`Page-${pageObj.number}.png`, base64Data, { base64: true });
+            });
+            
+            const content = await zip.generateAsync({ type: "blob" });
+            downloadBlob(content, `${activePdfToImgFile.name.replace('.pdf', '')}-Images.zip`, 'application/zip');
+            triggerToast("ZIP file downloaded successfully!", "success");
+        }
+
+        // ===================================
+        // TOOL 3: TEXT TO PDF
+        // ===================================
+        function importTxtFile(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('text-to-pdf-content').value = e.target.result;
+                triggerToast("Text file imported!", "success");
+            };
+            reader.readAsText(file);
+        }
+
+        async function convertTextToPdf() {
+            const textContent = document.getElementById('text-to-pdf-content').value.trim();
+            if (!textContent) {
+                triggerToast("Please write or upload text content first.", "error");
+                return;
+            }
+            
+            triggerToast("Rendering text to PDF...", "info");
+            try {
+                const { PDFDocument, StandardFonts, rgb } = PDFLib;
+                const pdfDoc = await PDFDocument.create();
+                
+                const fontOption = document.getElementById('text-font').value;
+                const fontSize = parseInt(document.getElementById('text-size').value, 10);
+                
+                let activeFont;
+                if (fontOption === 'Courier') {
+                    activeFont = await pdfDoc.embedFont(StandardFonts.Courier);
+                } else if (fontOption === 'TimesRoman') {
+                    activeFont = await pdfDoc.embedFont(StandardFonts.TimesRoman);
+                } else {
+                    activeFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+                }
+                
+                let page = pdfDoc.addPage([595.28, 841.89]); // A4 Size
+                const { width, height } = page.getSize();
+                
+                const margin = 50;
+                const startX = margin;
+                let startY = height - margin;
+                const maxWidth = width - margin * 2;
+                const lineHeight = fontSize + 4;
+                
+                const lines = textContent.split('\n');
+                
+                for (let line of lines) {
+                    // Wrapping text manually
+                    const words = line.split(' ');
+                    let currentLineStr = '';
+                    
+                    for (let word of words) {
+                        const testLine = currentLineStr + (currentLineStr ? ' ' : '') + word;
+                        const testLineWidth = activeFont.widthOfTextAtSize(testLine, fontSize);
+                        
+                        if (testLineWidth > maxWidth) {
+                            if (startY - lineHeight < margin) {
+                                page = pdfDoc.addPage([595.28, 841.89]);
+                                startY = height - margin;
+                            }
+                            page.drawText(currentLineStr, {
+                                x: startX,
+                                y: startY,
+                                size: fontSize,
+                                font: activeFont,
+                                color: rgb(0.1, 0.1, 0.1)
+                            });
+                            startY -= lineHeight;
+                            currentLineStr = word;
+                        } else {
+                            currentLineStr = testLine;
+                        }
+                    }
+                    
+                    if (currentLineStr) {
+                        if (startY - lineHeight < margin) {
+                            page = pdfDoc.addPage([595.28, 841.89]);
+                            startY = height - margin;
+                        }
+                        page.drawText(currentLineStr, {
+                            x: startX,
+                            y: startY,
+                            size: fontSize,
+                            font: activeFont,
+                            color: rgb(0.1, 0.1, 0.1)
+                        });
+                        startY -= lineHeight;
+                    }
+                }
+                
+                const pdfBytes = await pdfDoc.save();
+                downloadBlob(pdfBytes, 'ApexPDF-Text-Document.pdf', 'application/pdf');
+                triggerToast("PDF successfully created and downloaded!", "success");
+            } catch (err) {
+                console.error(err);
+                triggerToast("Could not construct PDF from given text.", "error");
+            }
+        }
+
+        // ===================================
+        // TOOL 4: PDF TO TEXT
+        // ===================================
+        async function extractTextFromPdf(file) {
+            if (!file) return;
+            triggerToast("Analyzing document text layers...", "info");
+            
+            const textStatus = document.getElementById('text-extraction-status');
+            const textOutput = document.getElementById('extracted-text-area');
+            
+            textStatus.innerHTML = '<p><i class="fa-solid fa-spinner animate-spin mr-1"></i> Extracting content...</p>';
+            textOutput.value = '';
+            
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const typedarray = new Uint8Array(e.target.result);
+                    const pdf = await pdfjsLib.getDocument(typedarray).promise;
+                    let extractedText = '';
+                    
+                    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                        const page = await pdf.getPage(pageNum);
+                        const textContent = await page.getTextContent();
+                        const pageText = textContent.items.map(item => item.str).join(' ');
+                        extractedText += `--- Page ${pageNum} ---\n\n${pageText}\n\n\n`;
+                    }
+                    
+                    textOutput.value = extractedText.trim();
+                    textStatus.innerHTML = `
+                        <div class="space-y-1">
+                            <p class="text-emerald-400 font-semibold"><i class="fa-solid fa-circle-check"></i> Success</p>
+                            <p><span class="font-bold">Total Pages:</span> ${pdf.numPages}</p>
+                            <p><span class="font-bold">Total Characters:</span> ${extractedText.length}</p>
+                        </div>
+                    `;
+                    triggerToast("Text harvested successfully!", "success");
+                } catch (err) {
+                    console.error(err);
+                    textStatus.innerHTML = '<p class="text-red-400"><i class="fa-solid fa-circle-xmark"></i> Failed to harvest text.</p>';
+                    triggerToast("Text extraction failed.", "error");
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function copyExtractedText() {
+            const text = document.getElementById('extracted-text-area').value;
+            if (!text) {
+                triggerToast("No text to copy.", "error");
+                return;
+            }
+            navigator.clipboard.writeText(text);
+            triggerToast("Copied to clipboard!", "success");
+        }
+
+        function downloadExtractedText() {
+            const text = document.getElementById('extracted-text-area').value;
+            if (!text) {
+                triggerToast("No text to download.", "error");
+                return;
+            }
+            const blob = new Blob([text], { type: 'text/plain' });
+            downloadBlob(blob, 'ApexPDF-Extracted-Text.txt', 'text/plain');
+        }
+
+        // ===================================
+        // TOOL 5: MERGE PDFS
+        // ===================================
+        function handleMergePdfFiles(files) {
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    mergePdfFiles.push({
+                        id: Date.now() + Math.random().toString(36).substr(2, 5),
+                        name: file.name,
+                        size: file.size,
+                        data: e.target.result
+                    });
+                    renderMergeQueue();
+                };
+                reader.readAsArrayBuffer(file);
+            }
+        }
+
+        function renderMergeQueue() {
+            const container = document.getElementById('merge-queue');
+            container.innerHTML = '';
+            
+            if (mergePdfFiles.length === 0) {
+                container.innerHTML = '<p class="text-sm text-slate-500 italic">No PDFs in queue yet.</p>';
+                return;
+            }
+            
+            mergePdfFiles.forEach((file, index) => {
+                const item = document.createElement('div');
+                item.className = "flex items-center justify-between bg-slate-900 border border-slate-800 p-3 rounded-xl";
+                item.innerHTML = `
+                    <div class="flex items-center space-x-3 overflow-hidden">
+                        <span class="text-xs bg-pink-500/10 text-pink-400 font-bold px-2 py-1 rounded">${index + 1}</span>
+                        <p class="text-sm font-medium text-slate-200 truncate">${file.name}</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="moveMergeItem(${index}, -1)" class="p-1.5 hover:bg-slate-800 rounded text-slate-400 hover:text-white" ${index === 0 ? 'disabled' : ''}>
+                            <i class="fa-solid fa-arrow-up"></i>
+                        </button>
+                        <button onclick="moveMergeItem(${index}, 1)" class="p-1.5 hover:bg-slate-800 rounded text-slate-400 hover:text-white" ${index === mergePdfFiles.length - 1 ? 'disabled' : ''}>
+                            <i class="fa-solid fa-arrow-down"></i>
+                        </button>
+                        <button onclick="removeMergeItem(${index})" class="p-1.5 hover:bg-red-500/20 hover:text-red-400 rounded text-slate-400">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function moveMergeItem(index, direction) {
+            const targetIndex = index + direction;
+            if (targetIndex < 0 || targetIndex >= mergePdfFiles.length) return;
+            const temp = mergePdfFiles[index];
+            mergePdfFiles[index] = mergePdfFiles[targetIndex];
+            mergePdfFiles[targetIndex] = temp;
+            renderMergeQueue();
+        }
+
+        function removeMergeItem(index) {
+            mergePdfFiles.splice(index, 1);
+            renderMergeQueue();
+        }
+
+        async function executeMergePdfs() {
+            if (mergePdfFiles.length < 2) {
+                triggerToast("Please add at least 2 PDF files to merge.", "error");
+                return;
+            }
+            
+            triggerToast("Combining PDFs in order...", "info");
+            try {
+                const { PDFDocument } = PDFLib;
+                const mergedPdf = await PDFDocument.create();
+                
+                for (const pdfObj of mergePdfFiles) {
+                    const donorPdf = await PDFDocument.load(pdfObj.data);
+                    const copiedPages = await mergedPdf.copyPages(donorPdf, donorPdf.getPageIndices());
+                    copiedPages.forEach((page) => mergedPdf.addPage(page));
+                }
+                
+                const mergedPdfBytes = await mergedPdf.save();
+                downloadBlob(mergedPdfBytes, 'ApexPDF-Combined.pdf', 'application/pdf');
+                triggerToast("PDFs merged successfully!", "success");
+            } catch (err) {
+                console.error(err);
+                triggerToast("Failed to merge PDF files.", "error");
+            }
+        }
+
+        // ===================================
+        // REUSABLE HELPER UTILS
+        // ===================================
+        function downloadBlob(data, filename, mimeType) {
+            const blob = new Blob([data], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>

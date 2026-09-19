@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MockMail - Secure Webmail Simulation</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 6px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background-color: #cbd5e1;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans h-screen flex flex-col overflow-hidden">
+
+  <!-- HEADER -->
+  <header class="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between shadow-sm z-10">
+    <div class="flex items-center gap-3">
+      <div class="bg-red-500 text-white p-2 rounded-lg flex items-center justify-center shadow-md shadow-red-200">
+        <i class="fa-solid fa-envelope text-xl"></i>
+      </div>
+      <div>
+        <h1 class="text-xl font-bold tracking-tight text-slate-900">Mock<span class="text-red-500">Mail</span></h1>
+        <p class="text-xs text-slate-500">Simulated Webmail Environment</p>
+      </div>
+    </div>
+    <div id="userInfo" class="hidden items-center gap-4">
+      <span class="text-sm text-slate-600 font-medium" id="userDisplayName"></span>
+      <button onclick="logout()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-sm transition font-medium flex items-center gap-2">
+        <i class="fa-solid fa-sign-out-alt"></i> Log Out
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN WINDOW -->
+  <main class="flex-1 flex overflow-hidden">
+
+    <!-- AUTH SCREEN -->
+    <div id="authScreen" class="flex-1 flex items-center justify-center p-6">
+      <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-slate-100">
+        <!-- Tabs -->
+        <div class="flex border-b border-slate-200 mb-6">
+          <button id="tabLoginBtn" onclick="switchTab('login')" class="flex-1 pb-3 text-center font-semibold text-red-500 border-b-2 border-red-500 transition-all">Log In</button>
+          <button id="tabRegisterBtn" onclick="switchTab('register')" class="flex-1 pb-3 text-center font-semibold text-slate-400 hover:text-slate-600 transition-all">Register Account</button>
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-1">Email Address</label>
+            <input type="email" id="loginEmail" placeholder="username@mockmail.com" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-1">Password</label>
+            <input type="password" id="loginPassword" placeholder="••••••••" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition">
+          </div>
+          <button type="submit" class="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-3 rounded-xl shadow-lg shadow-red-500/20 transition duration-200">Log In to Mailbox</button>
+        </form>
+
+        <!-- Register Form -->
+        <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-4 hidden">
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-1">Full Name</label>
+            <input type="text" id="regFullName" placeholder="John Doe" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-1">Create Email Address</label>
+            <div class="flex items-center">
+              <input type="text" id="regEmailPrefix" placeholder="username" required class="w-full px-4 py-2.5 rounded-l-xl border-y border-l border-slate-200 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition">
+              <span class="bg-slate-100 border border-slate-200 px-3 py-2.5 rounded-r-xl text-slate-500 text-sm font-medium select-none">@mockmail.com</span>
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-1">Secure Password</label>
+            <input type="password" id="regPassword" placeholder="••••••••" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition">
+          </div>
+          <button type="submit" class="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-3 rounded-xl shadow-lg shadow-red-500/20 transition duration-200">Create Mock Account</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- MAIL INTERFACE (HIDDEN BY DEFAULT) -->
+    <div id="mailInterface" class="hidden flex-1 flex overflow-hidden">
+      <!-- Sidebar -->
+      <aside class="w-64 bg-white border-r border-slate-200 p-4 flex flex-col justify-between">
+        <div class="space-y-6">
+          <button onclick="openCompose()" class="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-red-500/20 transition duration-200 flex items-center justify-center gap-2">
+            <i class="fa-solid fa-pen"></i> Compose Mail
+          </button>
+          
+          <nav class="space-y-1">
+            <a href="#" onclick="loadInbox()" class="flex items-center justify-between px-3 py-2 rounded-lg bg-red-50 text-red-600 font-semibold text-sm transition">
+              <span class="flex items-center gap-3">
+                <i class="fa-solid fa-inbox"></i> Inbox
+              </span>
+              <span id="unreadCount" class="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">0</span>
+            </a>
+          </nav>
+        </div>
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+          <p class="text-xs text-slate-400 uppercase font-semibold mb-1">Active Address</p>
+          <p id="activeEmailStr" class="text-sm text-slate-700 font-bold break-all"></p>
+        </div>
+      </aside>
+
+      <!-- Email Workspace -->
+      <div class="flex-1 flex flex-col bg-slate-50 overflow-hidden">
+        <!-- Toolbar -->
+        <div class="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <button onclick="loadInbox()" class="p-2 hover:bg-slate-100 rounded-lg text-slate-500 transition" title="Refresh">
+              <i class="fa-solid fa-rotate-right"></i> Refresh Inbox
+            </button>
+          </div>
+          <div class="text-sm text-slate-500 font-medium">
+            Total Emails: <span id="totalMailCount" class="font-bold text-slate-800">0</span>
+          </div>
+        </div>
+
+        <!-- Main Workspace Pane -->
+        <div class="flex-1 flex overflow-hidden">
+          <!-- Email List View -->
+          <div id="emailListContainer" class="w-1/2 border-r border-slate-200 bg-white overflow-y-auto scrollbar-thin">
+            <div id="emailList" class="divide-y divide-slate-100"></div>
+          </div>
+
+          <!-- Email Preview View -->
+          <div id="emailPreviewContainer" class="w-1/2 bg-slate-50 overflow-y-auto p-6 scrollbar-thin flex flex-col">
+            <div id="emptyPreview" class="flex-1 flex flex-col items-center justify-center text-slate-400 gap-3">
+              <i class="fa-solid fa-envelope-open text-5xl text-slate-300"></i>
+              <p class="font-medium">Select an email to read its contents</p>
+            </div>
+            <div id="activePreview" class="hidden space-y-6 bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm">
+              <div class="flex justify-between items-start">
+                <div>
+                  <h2 id="previewSubject" class="text-xl font-bold text-slate-900 mb-2"></h2>
+                  <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-sm uppercase" id="previewAvatar"></div>
+                    <div>
+                      <p class="text-sm font-semibold text-slate-800" id="previewFrom"></p>
+                      <p class="text-xs text-slate-400" id="previewTimestamp"></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <hr class="border-slate-100">
+              <div id="previewBody" class="text-slate-600 text-sm whitespace-pre-wrap leading-relaxed"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- COMPOSE MODAL -->
+  <div id="composeModal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl border border-slate-200/80">
+      <div class="bg-slate-900 text-white px-6 py-4 rounded-t-2xl flex items-center justify-between">
+        <h3 class="font-bold flex items-center gap-2"><i class="fa-solid fa-pen"></i> New Message</h3>
+        <button onclick="closeCompose()" class="text-slate-400 hover:text-white transition"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <form onsubmit="handleSendEmail(event)" class="p-6 space-y-4">
+        <div>
+          <label class="block text-xs uppercase font-bold text-slate-500 mb-1">To (Recipient Address)</label>
+          <input type="email" id="composeTo" placeholder="friend@mockmail.com" required class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 focus:outline-none transition">
+        </div>
+        <div>
+          <label class="block text-xs uppercase font-bold text-slate-500 mb-1">Subject</label>
+          <input type="text" id="composeSubject" placeholder="How's everything going?" required class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 focus:outline-none transition">
+        </div>
+        <div>
+          <label class="block text-xs uppercase font-bold text-slate-500 mb-1">Message Body</label>
+          <textarea id="composeBody" rows="6" placeholder="Write your email here..." required class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 focus:outline-none transition resize-none"></textarea>
+        </div>
+        <div class="flex justify-end gap-3 pt-2">
+          <button type="button" onclick="closeCompose()" class="px-5 py-2.5 rounded-xl border border-slate-200 font-semibold hover:bg-slate-50 text-slate-600 transition text-sm">Cancel</button>
+          <button type="submit" class="px-6 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white font-semibold transition text-sm shadow-md shadow-red-500/20 flex items-center gap-2">
+            <i class="fa-solid fa-paper-plane"></i> Send Email
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

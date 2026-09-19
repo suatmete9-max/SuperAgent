@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Premium Portfolio</title>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <header class="navbar">
+        <div class="container nav-container">
+            <a href="#" class="logo">Portfolio<span>.</span></a>
+            <nav class="nav-menu">
+                <a href="#home" class="nav-link active">Home</a>
+                <a href="#about" class="nav-link">About</a>
+                <a href="#projects" class="nav-link">Projects</a>
+                <a href="#contact" class="nav-link">Contact</a>
+            </nav>
+            <div class="menu-toggle" id="mobile-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-section">
+        <div class="container hero-container">
+            <div class="hero-content">
+                <span class="subtitle">Welcome to my world</span>
+                <h1 class="hero-title">Hi, I'm <span class="highlight">Apex Creator</span></h1>
+                <p class="hero-desc">A passionate Full-Stack Developer & Designer crafting high-performance, beautiful, and user-centric web applications.</p>
+                <div class="hero-buttons">
+                    <a href="#projects" class="btn btn-primary">My Work</a>
+                    <a href="#contact" class="btn btn-secondary">Contact Me</a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <!-- Digital Clock Widget (Integrated seamlessly) -->
+                <div class="clock-widget">
+                    <div class="clock-title">Local Time</div>
+                    <div class="clock-display">
+                        <span id="hours">00</span>:
+                        <span id="minutes">00</span>:
+                        <span id="seconds">00</span>
+                        <span id="ampm" class="ampm">AM</span>
+                    </div>
+                    <div class="clock-date" id="clock-date">Loading Date...</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <h2 class="section-title">About Me</h2>
+            <div class="about-grid">
+                <div class="about-text">
+                    <h3>Who I Am</h3>
+                    <p>I am a creative professional specializing in front-end and back-end development. With an eye for detail and a love for clean code, I build interactive digital experiences that solve real-world problems.</p>
+                    <p>My goal is to constantly learn and adapt to modern technology stacks, ensuring optimal performance and top-tier design trends in every single project.</p>
+                </div>
+                <div class="skills-container">
+                    <h3>My Expertise</h3>
+                    <div class="skill-bar">
+                        <div class="skill-info">
+                            <span>HTML5 & CSS3</span>
+                            <span>95%</span>
+                        </div>
+                        <div class="progress-line"><span style="width: 95%;"></span></div>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-info">
+                            <span>JavaScript (ES6+)</span>
+                            <span>88%</span>
+                        </div>
+                        <div class="progress-line"><span style="width: 88%;"></span></div>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-info">
+                            <span>React.js / Vue.js</span>
+                            <span>80%</span>
+                        </div>
+                        <div class="progress-line"><span style="width: 80%;"></span></div>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-info">
+                            <span>Node.js / Databases</span>
+                            <span>75%</span>
+                        </div>
+                        <div class="progress-line"><span style="width: 75%;"></span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="projects-section">
+        <div class="container">
+            <h2 class="section-title">My Selected Projects</h2>
+            <div class="projects-grid">
+                <!-- Project Card 1 -->
+                <div class="project-card">
+                    <div class="project-img">
+                        <div class="img-placeholder"><i class="fa-solid fa-laptop-code"></i></div>
+                    </div>
+                    <div class="project-info">
+                        <h4>E-Commerce Platform</h4>
+                        <p>A completely responsive custom online shopping cart with dynamic filtering and integrated secure checkout systems.</p>
+                        <div class="project-tags">
+                            <span>React</span>
+                            <span>Node.js</span>
+                            <span>MongoDB</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Project Card 2 -->
+                <div class="project-card">
+                    <div class="project-img">
+                        <div class="img-placeholder"><i class="fa-solid fa-chart-line"></i></div>
+                    </div>
+                    <div class="project-info">
+                        <h4>SaaS Dashboard</h4>
+                        <p>Real-time analytical monitoring dashboard displaying user metrics, beautiful charts, and dynamic custom widgets.</p>
+                        <div class="project-tags">
+                            <span>HTML</span>
+                            <span>CSS Grid</span>
+                            <span>ChartJS</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Project Card 3 -->
+                <div class="project-card">
+                    <div class="project-img">
+                        <div class="img-placeholder"><i class="fa-solid fa-mobile-screen-button"></i></div>
+                    </div>
+                    <div class="project-info">
+                        <h4>Weather Forecast App</h4>
+                        <p>An interactive dynamic weather forecasting web application leveraging third-party APIs with beautiful location transitions.</p>
+                        <div class="project-tags">
+                            <span>JavaScript</span>
+                            <span>Fetch API</span>
+                            <span>CSS Variables</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <h2 class="section-title">Get In Touch</h2>
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <h3>Let's collaborate on something amazing.</h3>
+                    <p>If you have any exciting opportunities, projects, or just want to connect, feel free to drop me a message.</p>
+                    <ul class="contact-details">
+                        <li><i class="fa-solid fa-envelope"></i> info@yourdomain.com</li>
+                        <li><i class="fa-solid fa-phone"></i> +91 9876543210</li>
+                        <li><i class="fa-solid fa-location-dot"></i> New Delhi, India</li>
+                    </ul>
+                </div>
+                <div class="contact-form-container">
+                    <form id="contactForm" class="contact-form">
+                        <div class="form-group">
+                            <input type="text" id="name" required placeholder="Your Name">
+                        </div>
+                        <div class="form-group">
+                            <input type="email" id="email" required placeholder="Your Email">
+                        </div>
+                        <div class="form-group">
+                            <textarea id="message" rows="5" required placeholder="Your Message"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-submit">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <p>&copy; <span id="year"></span> Apex Creator. All Rights Reserved.</p>
+            <div class="social-links">
+                <a href="#"><i class="fa-brands fa-github"></i></a>
+                <a href="#"><i class="fa-brands fa-linkedin"></i></a>
+                <a href="#"><i class="fa-brands fa-twitter"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JS Script -->
+    <script src="script.js"></script>
+</body>
+</html>

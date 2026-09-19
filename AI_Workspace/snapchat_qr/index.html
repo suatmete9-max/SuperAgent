@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snapchat QR Code Generator - @m.bhat99</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #0b0b0f;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(255, 252, 0, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(0, 0, 0, 0.8) 0px, transparent 50%);
+        }
+        .snap-yellow {
+            background-color: #FFFC00;
+        }
+        .snap-yellow-text {
+            color: #FFFC00;
+        }
+        .snap-border {
+            border: 4px solid #000000;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+    </style>
+</head>
+<body class="min-h-screen text-white flex flex-col items-center justify-between p-4 md:p-8">
+
+    <!-- Header -->
+    <header class="w-full max-w-6xl flex justify-between items-center mb-8">
+        <div class="flex items-center gap-3">
+            <div class="snap-yellow p-2 rounded-xl text-black shadow-lg shadow-yellow-500/10">
+                <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2.25c-4.636 0-8.25 3.197-8.25 7.433 0 2.215.992 4.197 2.585 5.534-.233.725-.86 1.942-2.135 2.875 3.328 0 5.485-1.573 6.27-2.228A9.79 9.79 0 0 0 12 16.117c.522 0 1.033-.041 1.53-.12 2.052-.33 3.842-1.32 5.127-2.698 1.593-1.337 2.583-3.32 2.583-5.534 0-4.236-3.614-7.433-8.25-7.433-.008.082-.016.166-.024.25h.024zm0 2.25c2.82 0 5.25 1.765 5.25 4.318 0 1.25-.59 2.37-1.55 3.1-.735.56-1.745 1.022-2.924 1.15-.366.04-.73.06-1.096.06-2.82 0-5.25-1.765-5.25-4.318 0-1.25.59-2.37 1.55-3.1C8.715 5.44 9.725 4.978 10.904 4.85c.366-.04.73-.06 1.096-.06z"/>
+                    <path d="M12 4.318c-3.107 0-5.625 2.158-5.625 4.818 0 2.38 2.016 4.364 4.675 4.757.294.043.601.061.95.061 3.107 0 5.625-2.158 5.625-4.818 0-2.38-2.016-4.364-4.675-4.757a4.98 4.98 0 0 0-.95-.061z" style="display:none;"/>
+                    <!-- Simplified Snapchat Ghost outline -->
+                    <path d="M12 3c-3.58 0-6.5 2.92-6.5 6.5 0 1.83.76 3.49 1.98 4.67C6.63 15.61 5.5 17.5 5.5 19c0 1 .8 1.5 1.8 1.5h9.4c1 0 1.8-.5 1.8-1.5 0-1.5-1.13-3.39-1.98-4.83 1.22-1.18 1.98-2.84 1.98-4.67 0-3.58-2.92-6.5-6.5-6.5zm3.62 13.93c.73 1.24 1.38 2.57 1.38 3.07H7c0-.5.65-1.83 1.38-3.07.24-.41.42-.76.56-1.07.96.61 2.1 1.14 3.06 1.14s2.1-.53 3.06-1.14c.14.31.32.66.56 1.07z"/>
+                </svg>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold tracking-tight">SnapQR <span class="text-xs bg-yellow-400 text-black px-2 py-0.5 rounded-full font-semibold ml-1">PRO</span></h1>
+                <p class="text-xs text-gray-400">Snapchat QR Studio</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <a href="https://snapchat.com/add/m.bhat99" target="_blank" class="text-sm text-gray-300 hover:text-yellow-300 transition-all flex items-center gap-1">
+                <span>@m.bhat99</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Body -->
+    <main class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center my-auto">
+        
+        <!-- Left Side: Controls & Input -->
+        <section class="lg:col-span-5 flex flex-col gap-6">
+            <div class="space-y-2">
+                <span class="text-xs font-semibold uppercase tracking-widest text-yellow-400">Exclusive Design</span>
+                <h2 class="text-4xl font-extrabold tracking-tight leading-tight md:text-5xl">
+                    Get Your Custom <br><span class="snap-yellow-text">Snapchat QR</span>
+                </h2>
+                <p class="text-gray-400 text-sm">
+                    Generate a gorgeous, high-contrast Snapchat brand QR code. Built specifically for scan-safety, styling, and modern vector sharing.
+                </p>
+            </div>
+
+            <!-- Inputs Card -->
+            <div class="glass-panel p-6 rounded-2xl space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Snapchat Username</label>
+                    <div class="relative flex items-center">
+                        <span class="absolute left-4 text-gray-400 font-medium">snapchat.com/add/</span>
+                        <input 
+                            type="text" 
+                            id="username-input" 
+                            value="m.bhat99"
+                            placeholder="username" 
+                            class="w-full pl-[145px] pr-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-yellow-400 text-white font-semibold transition-all"
+                        >
+                    </div>
+                </div>
+
+                <!-- Styling Options -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Background Color</label>
+                        <div class="flex items-center gap-2 bg-white/5 p-2 rounded-xl border border-white/10">
+                            <input type="color" id="bg-color-picker" value="#FFFC00" class="w-8 h-8 rounded-lg cursor-pointer bg-transparent border-0">
+                            <span class="text-xs font-mono uppercase text-gray-300" id="bg-hex">#FFFC00</span>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">QR Code Color</label>
+                        <div class="flex items-center gap-2 bg-white/5 p-2 rounded-xl border border-white/10">
+                            <input type="color" id="fg-color-picker" value="#000000" class="w-8 h-8 rounded-lg cursor-pointer bg-transparent border-0">
+                            <span class="text-xs font-mono uppercase text-gray-300" id="fg-hex">#000000</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ghost Icon Customizer -->
+                <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 3c-3.58 0-6.5 2.92-6.5 6.5 0 1.83.76 3.49 1.98 4.67C6.63 15.61 5.5 17.5 5.5 19c0 1 .8 1.5 1.8 1.5h9.4c1 0 1.8-.5 1.8-1.5 0-1.5-1.13-3.39-1.98-4.83 1.22-1.18 1.98-2.84 1.98-4.67 0-3.58-2.92-6.5-6.5-6.5z"/>
+                        </svg>
+                        <span class="text-sm font-medium">Center Ghost Mascot</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="toggle-ghost" checked class="sr-only peer">
+                        <div class="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-400"></div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Quick Share / Preset Options -->
+            <div class="flex gap-3">
+                <button id="btn-download" class="flex-1 py-4 px-6 snap-yellow text-black font-bold rounded-xl hover:shadow-lg hover:shadow-yellow-400/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    Download PNG
+                </button>
+                <button id="btn-copy" class="py-4 px-6 bg-white/10 text-white font-semibold rounded-xl hover:bg-white/20 active:scale-[0.98] transition-all flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                    Copy Link
+                </button>
+            </div>
+        </section>
+
+        <!-- Right Side: Beautiful QR Canvas Preview Card -->
+        <section class="lg:col-span-7 flex flex-col items-center justify-center">
+            <div class="relative group">
+                <!-- Backlight glow -->
+                <div class="absolute -inset-1 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-[2.5rem] blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
+                
+                <!-- Physical Card Body -->
+                <div id="snap-card" class="relative w-[360px] md:w-[420px] bg-black p-8 rounded-[2.5rem] border border-white/10 shadow-2xl flex flex-col items-center gap-6">
+                    
+                    <!-- Header on Card -->
+                    <div class="w-full flex justify-between items-center text-xs tracking-widest text-gray-400 uppercase">
+                        <span>Official Snapcode Style</span>
+                        <span class="font-bold text-yellow-400">★ Scan Me</span>
+                    </div>
+
+                    <!-- Main Styled QR Canvas Frame -->
+                    <div class="relative p-4 rounded-[2rem] transition-all shadow-inner" id="qr-frame-bg" style="background-color: #FFFC00;">
+                        
+                        <!-- The actual QR target canvas -->
+                        <div id="qrcode-target" class="relative rounded-xl overflow-hidden p-1 bg-white"></div>
+                        
+                        <!-- Overlay Snapchat Ghost Icon in center (custom DOM overlaid precisely on top of QR code) -->
+                        <div id="center-ghost" class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <div class="bg-white p-2.5 rounded-2xl shadow-xl border-2 border-black flex items-center justify-center w-14 h-14">
+                                <svg class="w-9 h-9 text-black" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2.25c-4.636 0-8.25 3.197-8.25 7.433 0 2.215.992 4.197 2.585 5.534-.233.725-.86 1.942-2.135 2.875 3.328 0 5.485-1.573 6.27-2.228A9.79 9.79 0 0 0 12 16.117c.522 0 1.033-.041 1.53-.12 2.052-.33 3.842-1.32 5.127-2.698 1.593-1.337 2.583-3.32 2.583-5.534 0-4.236-3.614-7.433-8.25-7.433zm3.62 14.68c-.14-.41-.32-.76-.56-1.07-.96.61-2.1 1.14-3.06 1.14s-2.1-.53-3.06-1.14c-.14.31-.32.66-.56 1.07-.73 1.24-1.38 2.57-1.38 3.07h9.94c0-.5-.65-1.83-1.38-3.07z"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Scan Instruction & ID details -->
+                    <div class="text-center space-y-1.5">
+                        <p class="text-lg font-bold tracking-wide text-white" id="card-display-handle">@m.bhat99</p>
+                        <p class="text-xs text-gray-400">Open Snapchat camera & point to scan</p>
+                    </div>
+
+                    <!-- Decorative Footer elements representing camera view -->
+                    <div class="w-full flex justify-between items-center text-gray-500 pt-2 border-t border-white/5 text-[10px] font-mono">
+                        <span>LENS INDENT: 1080p</span>
+                        <span>SNAP_SERIES_Q</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full max-w-6xl text-center py-6 text-xs text-gray-500 border-t border-white/5 mt-8">
+        <p>© 2024 SnapQR. Custom QR creation tailored for @m.bhat99. Not affiliated with Snapchat Inc.</p>
+    </footer>
+
+    <!-- Interactive Scripting -->
+    <script>
+        const usernameInput = document.getElementById('username-input');
+        const bgColorPicker = document.getElementById('bg-color-picker');
+        const fgColorPicker = document.getElementById('fg-color-picker');
+        const bgHex = document.getElementById('bg-hex');
+        const fgHex = document.getElementById('fg-hex');
+        const toggleGhost = document.getElementById('toggle-ghost');
+        const centerGhost = document.getElementById('center-ghost');
+        const qrFrameBg = document.getElementById('qr-frame-bg');
+        const qrcodeTarget = document.getElementById('qrcode-target');
+        const cardDisplayHandle = document.getElementById('card-display-handle');
+        const btnDownload = document.getElementById('btn-download');
+        const btnCopy = document.getElementById('btn-copy');
+
+        let qrcodeInstance = null;
+
+        function generateQR() {
+            const username = usernameInput.value.trim() || 'm.bhat99';
+            const snapUrl = `https://snapchat.com/add/${username}`;
+            
+            // Update Display Card text
+            cardDisplayHandle.textContent = `@${username}`;
+            
+            // Clear prior canvas content
+            qrcodeTarget.innerHTML = '';
+
+            // Set Frame Styles
+            qrFrameBg.style.backgroundColor = bgColorPicker.value;
+
+            // Generate custom stylized QR standard structure
+            qrcodeInstance = new QRCode(qrcodeTarget, {
+                text: snapUrl,
+                width: 240,
+                height: 240,
+                colorDark: fgColorPicker.value,
+                colorLight: "#ffffff", // Base background for QR high contrast scan
+                correctLevel: QRCode.CorrectLevel.H // High recovery capacity to allow center logo placement
+            });
+        }
+
+        // Listeners for adjustments
+        usernameInput.addEventListener('input', generateQR);
+        bgColorPicker.addEventListener('input', (e) => {
+            bgHex.textContent = e.target.value.toUpperCase();
+            generateQR();
+        });
+        fgColorPicker.addEventListener('input', (e) => {
+            fgHex.textContent = e.target.value.toUpperCase();
+            generateQR();
+        });
+        toggleGhost.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                centerGhost.style.display = 'flex';
+            } else {
+                centerGhost.style.display = 'none';
+            }
+        });
+
+        // Copy Link Action
+        btnCopy.addEventListener('click', () => {
+            const username = usernameInput.value.trim() || 'm.bhat99';
+            const snapUrl = `https://snapchat.com/add/${username}`;
+            navigator.clipboard.writeText(snapUrl).then(() => {
+                btnCopy.innerHTML = `<svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg> Copied!`;
+                setTimeout(() => {
+                    btnCopy.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg> Copy Link`;
+                }, 2000);
+            });
+        });
+
+        // Premium PNG rendering and download utilizing HTML5 canvas merge
+        btnDownload.addEventListener('click', () => {
+            const qrCanvas = qrcodeTarget.querySelector('canvas');
+            if (!qrCanvas) return;
+
+            // Create temporary canvas to merge frame, background, QR Code, and Ghost graphic for a seamless high resolution PNG download
+            const downloadCanvas = document.createElement('canvas');
+            const ctx = downloadCanvas.getContext('2d');
+            
+            // Dimensions matching card preview scale
+            downloadCanvas.width = 400;
+            downloadCanvas.height = 400;
+
+            // Draw custom Snap yellow backdrop
+            ctx.fillStyle = bgColorPicker.value;
+            ctx.beginPath();
+            ctx.roundRect(0, 0, 400, 400, 32);
+            ctx.fill();
+
+            // Draw central white QR backing card
+            ctx.fillStyle = "#ffffff";
+            ctx.beginPath();
+            ctx.roundRect(70, 70, 260, 260, 16);
+            ctx.fill();
+
+            // Draw QR code canvas output in center of frame
+            ctx.drawImage(qrCanvas, 80, 80, 240, 240);
+
+            // Draw Ghost Mascot in the center if toggled
+            if (toggleGhost.checked) {
+                // Mascot backing badge
+                ctx.fillStyle = "#ffffff";
+                ctx.strokeStyle = "#000000";
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.roundRect(170, 170, 60, 60, 14);
+                ctx.fill();
+                ctx.stroke();
+
+                // SVG Ghost path overlay drawing inside context
+                ctx.fillStyle = "#000000";
+                ctx.beginPath();
+                // Simplified ghost drawing inside canvas center context
+                const path = new Path2D("M192.5,182c-3.5,0-5.8,2.5-5.8,6c0,1.8.8,3.2,1.8,4.2c-1.5,1.5-2.5,3.2-2.5,5c0,1,.8,1.5,1.8,1.5h12.5c1,0,1.8-.5,1.8-1.5c0-1.8-1.1-3.5-2-5c1-1 1.8-2.4,1.8-4.2c0-3.5-2.3-6-5.8-6z");
+                
+                // Scale ghost for Canvas rendering
+                ctx.save();
+                ctx.translate(5, 5); // Alignment adjust
+                ctx.scale(1.2, 1.2);
+                ctx.fillStyle = fgColorPicker.value;
+                ctx.fill(path);
+                ctx.restore();
+            }
+
+            // Export link and trigger download
+            const imageURI = downloadCanvas.toDataURL("image/png");
+            const link = document.createElement('a');
+            link.download = `snapcode_@${usernameInput.value.trim() || 'm.bhat99'}.png`;
+            link.href = imageURI;
+            link.click();
+        });
+
+        // Init Generator on load
+        window.onload = generateQR;
+    </script>
+</body>
+</html>

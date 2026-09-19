@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyFastBot - Ultra Fast AI Assistant Dashboard</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for real-time analytics simulation -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0b0f19;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #111827;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4b5563;
+        }
+        .glassmorphism {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 50%, #1d4ed8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .pulse-glow {
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+    </style>
+</head>
+<body class="text-gray-100 overflow-hidden h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="glassmorphism border-b border-gray-800 px-6 py-4 flex items-center justify-between z-10 shrink-0">
+        <div class="flex items-center gap-3">
+            <div class="h-10 w-10 bg-gradient-to-tr from-blue-600 to-indigo-500 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30">
+                <i class="fa-solid fa-bolt text-xl text-white"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-extrabold tracking-tight flex items-center gap-2">
+                    myfastbot <span class="text-xs bg-blue-500/10 text-blue-400 px-2.5 py-0.5 rounded-full font-semibold border border-blue-500/20">v2.5 PRO</span>
+                </h1>
+                <p class="text-xs text-gray-400">Your ultra-speed intelligent co-pilot</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2 bg-emerald-500/10 text-emerald-400 px-3 py-1.5 rounded-lg text-xs font-medium border border-emerald-500/20">
+                <span class="h-2 w-2 rounded-full bg-emerald-400 animate-ping"></span>
+                SYSTEM: ONLINE
+            </div>
+            <div class="text-xs text-gray-400 hidden sm:block">
+                Latency: <span id="latency-val" class="text-blue-400 font-bold">14ms</span>
+            </div>
+            <button id="toggle-config-btn" class="p-2.5 bg-gray-800 hover:bg-gray-700 rounded-xl transition duration-200 border border-gray-700 text-gray-300 md:hidden">
+                <i class="fa-solid fa-sliders"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <div class="flex flex-1 overflow-hidden relative">
+        
+        <!-- Left Sidebar: Analytics & Presets -->
+        <aside class="w-80 bg-[#0f1422] border-r border-gray-800 flex-col p-5 hidden lg:flex shrink-0 overflow-y-auto">
+            <div class="mb-6">
+                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Quick Starters</h3>
+                <div class="space-y-2">
+                    <button onclick="applyPreset('Speed Optimization', 'Analyze my website load speed and suggest caching strategies.')" class="w-full text-left p-3 rounded-xl bg-gray-800/40 hover:bg-blue-600/10 hover:border-blue-500/30 border border-transparent transition text-sm">
+                        <div class="font-medium text-gray-200 flex items-center gap-2">
+                            <i class="fa-solid fa-gauge-high text-blue-400"></i> Speed Optimization
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1 truncate">Analyze load speed and caching...</p>
+                    </button>
+                    <button onclick="applyPreset('Refactor Code', 'Optimize this loop function to have O(1) time complexity if possible.')" class="w-full text-left p-3 rounded-xl bg-gray-800/40 hover:bg-blue-600/10 hover:border-blue-500/30 border border-transparent transition text-sm">
+                        <div class="font-medium text-gray-200 flex items-center gap-2">
+                            <i class="fa-solid fa-code text-indigo-400"></i> Refactor Code
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1 truncate">Optimize JS loop to O(1) complexity...</p>
+                    </button>
+                    <button onclick="applyPreset('Marketing Hook', 'Write an ultra-engaging LinkedIn hook for my SaaS launch.')" class="w-full text-left p-3 rounded-xl bg-gray-800/40 hover:bg-blue-600/10 hover:border-blue-500/30 border border-transparent transition text-sm">
+                        <div class="font-medium text-gray-200 flex items-center gap-2">
+                            <i class="fa-solid fa-rocket text-emerald-400"></i> Marketing Hook
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1 truncate">LinkedIn hook for SaaS launch...</p>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bot Stats Live simulator -->
+            <div class="mt-auto border-t border-gray-800 pt-6">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Simulated Live Load</h3>
+                    <span class="text-[10px] bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded font-mono">REAL-TIME</span>
+                </div>
+                <div class="bg-gray-900/50 rounded-xl p-3 border border-gray-800">
+                    <canvas id="metricsChart" class="w-full h-32"></canvas>
+                </div>
+                <div class="grid grid-cols-2 gap-2 mt-3">
+                    <div class="bg-gray-900/50 p-2.5 rounded-lg border border-gray-800 text-center">
+                        <div class="text-[10px] text-gray-400 uppercase">Tokens / Sec</div>
+                        <div class="text-lg font-bold text-blue-400 font-mono" id="tps-count">142.8</div>
+                    </div>
+                    <div class="bg-gray-900/50 p-2.5 rounded-lg border border-gray-800 text-center">
+                        <div class="text-[10px] text-gray-400 uppercase">Accuracy</div>
+                        <div class="text-lg font-bold text-emerald-400 font-mono">99.98%</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Center Chat Area -->
+        <main class="flex-1 flex flex-col bg-[#0d111d] relative overflow-hidden">
+            <!-- Messages Container -->
+            <div id="chat-container" class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 scroll-smooth">
+                
+                <!-- System Welcome Message -->
+                <div class="flex items-start gap-4 max-w-3xl mx-auto">
+                    <div class="h-10 w-10 bg-gradient-to-tr from-blue-600 to-indigo-500 rounded-xl flex items-center justify-center shadow-md shadow-blue-500/20 shrink-0">
+                        <i class="fa-solid fa-bolt text-white text-sm"></i>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-sm">myfastbot</span>
+                            <span class="text-[10px] bg-blue-500/20 text-blue-300 px-1.5 rounded">SYSTEM</span>
+                        </div>
+                        <div class="bg-gray-800/40 rounded-2xl rounded-tl-none p-4 text-sm text-gray-200 border border-gray-800 leading-relaxed">
+                            <p class="mb-2">👋 Hello! I am <strong>myfastbot</strong>, the fastest autonomous AI instance configured to execute code, design marketing ideas, or solve complex problems in milliseconds.</p>
+                            <p class="mb-3">How can I assist your workflow today?</p>
+                            <div class="flex flex-wrap gap-2 mt-2">
+                                <button onclick="sendSuggested('What is your response speed limit?')" class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 py-1.5 px-3 rounded-lg border border-gray-700 transition">
+                                    ⚡ Speed check
+                                </button>
+                                <button onclick="sendSuggested('Create a dark mode CSS button template')" class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 py-1.5 px-3 rounded-lg border border-gray-700 transition">
+                                    🎨 UI Templates
+                                </button>
+                            </div>
+                        </div>
+                        <span class="text-[10px] text-gray-500 pl-1">System active</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Chat Input Area -->
+            <div class="p-4 md:p-6 bg-gradient-to-t from-[#0b0f19] via-[#0d111d] to-transparent shrink-0 border-t border-gray-800">
+                <div class="max-w-3xl mx-auto">
+                    <form id="chat-form" class="relative bg-gray-900/80 border border-gray-700 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20 rounded-2xl transition-all duration-200 overflow-hidden shadow-2xl">
+                        <textarea 
+                            id="user-input" 
+                            rows="2"
+                            placeholder="Ask myfastbot anything (or click mic for voice input)..."
+                            class="w-full bg-transparent border-none text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-0 resize-none pl-4 pr-32 pt-4 pb-4"
+                        ></textarea>
+                        <div class="absolute right-3 bottom-3 flex items-center gap-2">
+                            <button 
+                                type="button" 
+                                id="mic-btn" 
+                                title="Speech to text"
+                                class="p-2 bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white rounded-xl transition border border-gray-700">
+                                <i class="fa-solid fa-microphone"></i>
+                            </button>
+                            <button 
+                                type="submit"
+                                class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-blue-500/20">
+                                <span>Send</span>
+                                <i class="fa-solid fa-paper-plane text-xs"></i>
+                            </button>
+                        </div>
+                    </form>
+                    <div class="flex items-center justify-between mt-3 px-2">
+                        <div class="text-xs text-gray-500 flex items-center gap-1">
+                            <i class="fa-solid fa-circle-nodes text-blue-500"></i> Connected to Ultra-Fast Global Edge Nodes
+                        </div>
+                        <div class="text-xs text-gray-400 flex items-center gap-2">
+                            <span class="hover:underline cursor-pointer" onclick="clearChat()">Clear conversation</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Sidebar: Custom Configurator -->
+        <aside id="config-sidebar" class="w-80 bg-[#0f1422] border-l border-gray-800 flex flex-col p-5 absolute inset-y-0 right-0 z-20 transform translate-x-full md:relative md:translate-x-0 transition-transform duration-300 overflow-y-auto shrink-0">
+            <div class="flex items-center justify-between pb-4 border-b border-gray-800 mb-6">
+                <h3 class="text-sm font-bold text-gray-200 flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-blue-500"></i> Bot Configuration
+                </h3>
+                <button id="close-config-btn" class="text-gray-400 hover:text-white md:hidden">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- System Prompt / Personality -->
+            <div class="space-y-5">
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Bot Personality</label>
+                    <select id="bot-personality" class="w-full bg-gray-900 border border-gray-700 rounded-xl p-2.5 text-sm text-gray-200 focus:outline-none focus:border-blue-500">
+                        <option value="fast">🚀 Max Speed Mode (Instant & Concise)</option>
+                        <option value="creative">🎨 Creative Genius (Rich & Inspiring)</option>
+                        <option value="expert">🧠 Technical Architect (Pro Code & Analysis)</option>
+                        <option value="sarcastic">🌶️ Sarcastic Buddy (Funny & Direct)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Custom System Prompt</label>
+                    <textarea id="system-prompt" rows="3" class="w-full bg-gray-900 border border-gray-700 rounded-xl p-2.5 text-xs text-gray-300 focus:outline-none focus:border-blue-500" placeholder="Define the bot's ultimate goal and limits here...">You are myfastbot, the fastest AI powered engine. Help the user instantly and keep responses hyper-focused and premium.</textarea>
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider">Temperature</label>
+                        <span id="temp-val" class="text-xs text-blue-400 font-mono">0.7</span>
+                    </div>
+                    <input id="temperature-range" type="range" min="0.1" max="1.5" step="0.1" value="0.7" class="w-full accent-blue-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Voice Response (TTS)</label>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="voice-toggle" class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        <span class="ml-3 text-xs text-gray-300 font-medium">Read bot answers aloud</span>
+                    </label>
+                </div>
+
+                <div class="pt-4 border-t border-gray-800">
+                    <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Developer Tools</h4>
+                    <button onclick="exportChat()" class="w-full py-2.5 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-xl text-xs font-semibold border border-gray-700 transition flex items-center justify-center gap-2 mb-2">
+                        <i class="fa-solid fa-download"></i> Export Chat Log (.json)
+                    </button>
+                    <button onclick="saveConfiguration()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-semibold transition flex items-center justify-center gap-2 shadow-lg shadow-blue-500/10">
+                        <i class="fa-solid fa-floppy-disk"></i> Save Settings
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bottom Info -->
+            <div class="mt-auto pt-6 border-t border-gray-800 text-center text-xs text-gray-500">
+                Proudly running under <span class="font-bold text-blue-400">myfastbot</span> framework.
+            </div>
+        </aside>
+    </div>
+
+    <!-- JavaScript Functions -->
+    <script>
+        // Interactive Element selectors
+        const chatContainer = document.getElementById('chat-container');
+        const chatForm = document.getElementById('chat-form');
+        const userInput = document.getElementById('user-input');
+        const voiceToggle = document.getElementById('voice-toggle');
+        const micBtn = document.getElementById('mic-btn');
+        const tempRange = document.getElementById('temperature-range');
+        const tempVal = document.getElementById('temp-val');
+        const botPersonality = document.getElementById('bot-personality');
+        const systemPromptInput = document.getElementById('system-prompt');
+        
+        // Mobile configurator toggle
+        const toggleConfigBtn = document.getElementById('toggle-config-btn');
+        const closeConfigBtn = document.getElementById('close-config-btn');
+        const configSidebar = document.getElementById('config-sidebar');
+
+        toggleConfigBtn.addEventListener('click', () => {
+            configSidebar.classList.remove('translate-x-full');
+        });
+        closeConfigBtn.addEventListener('click', () => {
+            configSidebar.classList.add('translate-x-full');
+        });
+
+        // Update Temp Range Value UI
+        tempRange.addEventListener('input', (e) => {
+            tempVal.textContent = e.target.value;
+        });
+
+        // Dummy response database based on personality
+        const simulatedResponses = {
+            fast: {
+                greeting: "I am in High-Performance mode. Let me build or solve that for you instantly!",
+                responses: [
+                    "Optimized! Implemented memory compression and reduced execution cycles by 40%.",
+                    "Code parsed. Here is your ultra-fast response: Keep modules decoupled and cache the root database responses.",
+                    "Understood. Task executed in 8ms with optimal configurations.",
+                    "Done. Tested on 5 edge locations. Zero bottlenecks found."
+                ]
+            },
+            creative: {
+                greeting: "Welcome! Let us co-create masterpieces. Thinking out of the box mode activated.",
+                responses: [
+                    "Imagine a future where interfaces blend into thoughts. Let's design something fluid, custom-built, and glowing!",
+                    "How about we add a splash of neon glow and a narrative hook that leaves users breathless? Here is the concept...",
+                    "I've dreamed up a perfect solution. It's unique, vibrant, and highly memorable!",
+                    "Let's paint a picture with code and elegant copywriting. Behold the ultimate creative approach!"
+                ]
+            },
+            expert: {
+                greeting: "Technical Architect initialized. Ready to inspect compiler flags, systems engineering, or structural code.",
+                responses: [
+                    "Analyzing architectural complexity. The optimum decision is to establish an event-driven architecture using Kafka or Redis Streams.",
+                    "Following standard clean code paradigms, we should implement a Singleton pattern coupled with strict type validations.",
+                    "Reviewing system logs: Latency optimization is key. Suggesting a reverse proxy configuration using Nginx with Brotli compression.",
+                    "Parsed requirements. Applying standard SOLID design principles to ensure complete component decoupling."
+                ]
+            },
+            sarcastic: {
+                greeting: "Oh, great. Another human prompt. Let me drop everything and fix this for you.",
+                responses: [
+                    "Oh, perfect! Another problem easily solved with one Google search, but here I am doing the honors.",
+                    "Sure! Let me construct a flawless response so you can copy and paste it into your production code without testing.",
+                    "I responded so quickly that time literally bent backward. You're welcome, by the way.",
+                    "Behold: the peak of artificial intelligence, answering your highly specific query. Anything else I can do?"
+                ]
+            }
+        };
+
+        // Speech Recognition Setup
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRecognition) {
+            const recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.lang = 'en-US';
+
+            micBtn.addEventListener('click', () => {
+                recognition.start();
+                micBtn.classList.add('bg-red-600', 'text-white', 'pulse-glow');
+            });
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                userInput.value = transcript;
+                micBtn.classList.remove('bg-red-600', 'text-white', 'pulse-glow');
+            };
+
+            recognition.onerror = () => {
+                micBtn.classList.remove('bg-red-600', 'text-white', 'pulse-glow');
+                alert("Speech recognition failed or permission denied.");
+            };
+
+            recognition.onend = () => {
+                micBtn.classList.remove('bg-red-600', 'text-white', 'pulse-glow');
+            };
+        } else {
+            micBtn.title = "Speech to text not supported in this browser";
+            micBtn.disabled = true;
+            micBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+
+        // Text to Speech Functionality
+        function speakText(text) {
+            if ('speechSynthesis' in window && voiceToggle.checked) {
+                window.speechSynthesis.cancel(); // Clear current queue
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.pitch = 1;
+                utterance.rate = 1.1;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        // Handle message submission
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const text = userInput.value.trim();
+            if (!text) return;
+
+            // Append User Message
+            appendMessage('user', text);
+            userInput.value = '';
+            userInput.style.height = 'auto';
+
+            // Scroll to bottom
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            // Simulated Bot Typing animation
+            simulateBotResponse(text);
+        });
+
+        // Trigger preset directly from sidebar
+        function applyPreset(title, text) {
+            userInput.value = text;
+            userInput.focus();
+        }
+
+        // Trigger quick suggestions directly
+        function sendSuggested(text) {
+            userInput.value = text;
+            chatForm.dispatchEvent(new Event('submit'));
+        }
+
+        // Append styled message bubble
+        function appendMessage(sender, text) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `flex items-start gap-4 max-w-3xl mx-auto ${sender === 'user' ? 'flex-row-reverse' : ''}`;
+            
+            const avatarHtml = sender === 'user' 
+                ? `<div class="h-10 w-10 bg-gray-800 rounded-xl flex items-center justify-center shrink-0 border border-gray-700">
+                        <i class="fa-solid fa-user text-blue-400 text-sm"></i>
+                   </div>`
+                : `<div class="h-10 w-10 bg-gradient-to-tr from-blue-600 to-indigo-500 rounded-xl flex items-center justify-center shadow-md shadow-blue-500/20 shrink-0">
+                        <i class="fa-solid fa-bolt text-white text-sm"></i>
+                   </div>`;
+
+            const tagHtml = sender === 'user' 
+                ? `<span class="font-bold text-sm">You</span>`
+                : `<div class="flex items-center gap-2">
+                        <span class="font-bold text-sm">myfastbot</span>
+                        <span class="text-[10px] bg-blue-500/20 text-blue-300 px-1.5 rounded">BOT</span>
+                   </div>`;
+
+            const bubbleClass = sender === 'user'
+                ? `bg-blue-600 text-white rounded-2xl rounded-tr-none p-4 text-sm border border-blue-500 leading-relaxed`
+                : `bg-gray-800/40 rounded-2xl rounded-tl-none p-4 text-sm text-gray-200 border border-gray-800 leading-relaxed`;
+
+            messageDiv.innerHTML = `
+                ${avatarHtml}
+                <div class="space-y-1 max-w-[80%]">
+                    ${tagHtml}
+                    <div class="${bubbleClass}">
+                        <p>${escapeHtml(text)}</p>
+                    </div>
+                    <span class="text-[10px] text-gray-500 pl-1">Just now</span>
+                </div>
+            `;
+
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // Simulate bot responses in real time with loading
+        function simulateBotResponse(userText) {
+            // Add visual loader first
+            const loaderDiv = document.createElement('div');
+            loaderDiv.id = 'bot-typing-loader';
+            loaderDiv.className = 'flex items-start gap-4 max-w-3xl mx-auto';
+            loaderDiv.innerHTML = `
+                <div class="h-10 w-10 bg-gradient-to-tr from-blue-600 to-indigo-500 rounded-xl flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-bolt text-white text-sm animate-pulse"></i>
+                </div>
+                <div class="space-y-1">
+                    <span class="font-bold text-sm text-gray-400">myfastbot is typing...</span>
+                    <div class="bg-gray-800/20 rounded-2xl rounded-tl-none p-4 border border-gray-800 flex gap-1 items-center">
+                        <span class="h-2 w-2 rounded-full bg-blue-400 animate-bounce" style="animation-delay: 0.1s"></span>
+                        <span class="h-2 w-2 rounded-full bg-blue-400 animate-bounce" style="animation-delay: 0.2s"></span>
+                        <span class="h-2 w-2 rounded-full bg-blue-400 animate-bounce" style="animation-delay: 0.3s"></span>
+                    </div>
+                </div>
+            `;
+            chatContainer.appendChild(loaderDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            // Select randomized responses based on active personality profile
+            const activePersonality = botPersonality.value;
+            const personalityPool = simulatedResponses[activePersonality].responses;
+            let finalResponse = personalityPool[Math.floor(Math.random() * personalityPool.length)];
+
+            // Build structured replies
+            if (userText.toLowerCase().includes('hello') || userText.toLowerCase().includes('hi')) {
+                finalResponse = simulatedResponses[activePersonality].greeting;
+            } else if (userText.toLowerCase().includes('speed') || userText.toLowerCase().includes('fast')) {
+                finalResponse = `⚡ Speed analysis complete! Currently executing at ${ (Math.random() * 5 + 10).toFixed(2) }ms latency. Serving over global CDN edge caches. Zero queue delay.`;
+            } else if (userText.toLowerCase().includes('css') || userText.toLowerCase().includes('template') || userText.toLowerCase().includes('code')) {
+                finalResponse = `Here is your template code optimized for myfastbot compatibility:
+\n\n.myfastbot-btn {\n  background: linear-gradient(135deg, #3b82f6, #1d4ed8);\n  border-radius: 12px;\n  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);\n  transition: transform 0.2s ease-in-out;\n}\n\n.myfastbot-btn:hover {\n  transform: translateY(-2px);\n}`;
+            }
+
+            // Artificial latency between 400ms and 900ms
+            const latency = Math.floor(Math.random() * 500) + 400;
+            setTimeout(() => {
+                // Remove loader
+                const loader = document.getElementById('bot-typing-loader');
+                if (loader) loader.remove();
+
+                // Append real bot response
+                appendMessage('bot', finalResponse);
+                
+                // Read aloud if enabled
+                speakText(finalResponse);
+
+                // Update latency metrics visual
+                document.getElementById('latency-val').textContent = `${latency}ms`;
+            }, latency);
+        }
+
+        // Helper to escape characters
+        function escapeHtml(text) {
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;")
+                .replace(/\n/g, "<br>");
+        }
+
+        // Clear chat console
+        function clearChat() {
+            chatContainer.innerHTML = '';
+            appendMessage('bot', 'Conversations flushed successfully! How can myfastbot help you now?');
+        }
+
+        // Export Chat log safely
+        function exportChat() {
+            const chats = [];
+            const bubbles = chatContainer.querySelectorAll('.space-y-1');
+            bubbles.forEach(bubble => {
+                const sender = bubble.querySelector('.font-bold').textContent;
+                const content = bubble.querySelector('p')?.innerText || '';
+                chats.push({ sender, content, timestamp: new Date().toISOString() });
+            });
+
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(chats, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", "myfastbot_chat_log.json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        // Save configuration toast alert
+        function saveConfiguration() {
+            alert("✅ System Configuration saved into local profile storage context! Mode: " + botPersonality.value.toUpperCase() + " Mode.");
+        }
+
+        // Live Chart JS simulator
+        const ctx = document.getElementById('metricsChart').getContext('2d');
+        const metricsChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['', '', '', '', '', '', ''],
+                datasets: [{
+                    label: 'Queries/Min',
+                    data: [65, 78, 72, 89, 95, 110, 125],
+                    borderColor: '#3b82f6',
+                    borderWidth: 2,
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                },
+                scales: {
+                    x: { display: false },
+                    y: { 
+                        grid: { color: 'rgba(255,255,255,0.05)' },
+                        ticks: { color: '#4b5563', font: { size: 9 } }
+                    }
+                }
+            }
+        });
+
+        // Simulate changing performance metrics live
+        setInterval(() => {
+            // Update Chart metrics dynamically
+            const newData = metricsChart.data.datasets[0].data;
+            newData.shift();
+            newData.push(Math.floor(Math.random() * 50) + 80);
+            metricsChart.update();
+
+            // Update TPS live counter slightly
+            const tps = (Math.random() * 30 + 120).toFixed(1);
+            document.getElementById('tps-count').textContent = tps;
+        }, 3000);
+    </script>
+</body>
+</html>

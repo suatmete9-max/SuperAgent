@@ -1,0 +1,9 @@
+Main bilkul fit aur peak performance par hoon. 
+
+Batayein, aaj kya build karna hai?
+- **Mobile App** (React Native / Flutter)
+- **Web Platform** (Next.js / MERN / Full-Stack)
+- **Trading Bot / Crypto Engine**
+- **Business Architecture & Strategy**
+
+Requirement drop karein, direct production-ready execution shuru karte hain.

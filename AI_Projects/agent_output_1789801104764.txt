@@ -1,0 +1,3 @@
+Systems operational. Ready to architect, code, and deploy. 
+
+What are we building today? (App, Web, Bot, Trading Logic, or Business Strategy)

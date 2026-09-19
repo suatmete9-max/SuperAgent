@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ur" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free Domain Hub - مفت ڈومین حاصل کریں</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: rgba(22, 30, 49, 0.75);
+      --border: rgba(255, 255, 255, 0.08);
+      --accent: #38bdf8;
+      --accent-glow: rgba(56, 189, 248, 0.25);
+      --success: #10b981;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: radial-gradient(circle at 50% 0%, #172554 0%, var(--bg) 60%);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+    .container { max-width: 1100px; margin: 0 auto; }
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    .badge {
+      display: inline-block;
+      padding: 6px 14px;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid var(--accent);
+      border-radius: 9999px;
+      color: var(--accent);
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      letter-spacing: 0.5px;
+    }
+    h1 {
+      font-size: 2.75rem;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 0.75rem;
+      background: linear-gradient(to right, #ffffff, #93c5fd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .urdu-title {
+      font-family: 'Noto Nastaliq Urdu', serif;
+      font-size: 1.5rem;
+      color: #38bdf8;
+      margin-bottom: 1rem;
+      line-height: 2;
+    }
+    p.subtitle {
+      color: var(--text-muted);
+      max-width: 650px;
+      margin: 0 auto 2rem;
+      font-size: 1.05rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.75rem;
+      transition: transform 0.2s, border-color 0.2s;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+      box-shadow: 0 12px 30px var(--accent-glow);
+    }
+    .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+    .card-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .pill {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 6px;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--success);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .domain-preview {
+      background: rgba(0, 0, 0, 0.35);
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      font-family: monospace;
+      color: var(--accent);
+      margin-bottom: 1rem;
+      border: 1px dashed rgba(255, 255, 255, 0.15);
+    }
+    .card-desc {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      line-height: 1.5;
+      margin-bottom: 1.5rem;
+      flex-grow: 1;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.85rem 1.25rem;
+      background: var(--accent);
+      color: #041226;
+      font-weight: 700;
+      text-decoration: none;
+      border-radius: 10px;
+      transition: all 0.2s;
+      width: 100%;
+      border: none;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background: #7dd3fc;
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+    .guide-box {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+    }
+    .guide-box h2 {
+      margin-bottom: 1.5rem;
+      color: #fff;
+    }
+    .steps {
+      list-style-type: none;
+      display: grid;
+      gap: 1rem;
+    }
+    .step-item {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+    .step-num {
+      background: var(--accent);
+      color: #000;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .step-text {
+      font-size: 0.95rem;
+      color: #cbd5e1;
+    }
+    .urdu-guide {
+      font-family: 'Noto Nastaliq Urdu', serif;
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      line-height: 2.2;
+      direction: rtl;
+      color: #93c5fd;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <span class="badge">100% FREE • NO CREDIT CARD NEEDED</span>
+      <h1>Instant Free Domain Access</h1>
+      <div class="urdu-title">مفت ڈومین حاصل کرنے کا آسان ترین پورٹل</div>
+      <p class="subtitle">Directly claim and connect completely free domains & subdomains with zero hidden charges. Choose your favorite provider below:</p>
+    </header>
+
+    <div class="grid">
+      <!-- Option 1 -->
+      <div class="card">
+        <div>
+          <div class="card-top">
+            <span class="card-title">DuckDNS</span>
+            <span class="pill">BEST FOR APPS / IP</span>
+          </div>
+          <div class="domain-preview">yourname.duckdns.org</div>
+          <p class="card-desc">DuckDNS is completely free forever. Supported by Amazon AWS infrastructure. Point it to any IP address or web app within seconds.</p>
+        </div>
+        <a href="https://www.duckdns.org/" target="_blank" rel="noopener" class="btn">Open DuckDNS & Claim →</a>
+      </div>
+
+      <!-- Option 2 -->
+      <div class="card">
+        <div>
+          <div class="card-top">
+            <span class="card-title">GitHub Pages</span>
+            <span class="pill">BEST FOR WEBSITES</span>
+          </div>
+          <div class="domain-preview">yourname.github.io</div>
+          <p class="card-desc">Get completely free high-speed HTTPS domain and free web hosting forever powered by GitHub & Fastly CDN.</p>
+        </div>
+        <a href="https://pages.github.com/" target="_blank" rel="noopener" class="btn">Create on GitHub →</a>
+      </div>
+
+      <!-- Option 3 -->
+      <div class="card">
+        <div>
+          <div class="card-top">
+            <span class="card-title">FreeDNS (Afraid)</span>
+            <span class="pill">50,000+ DOMAINS</span>
+          </div>
+          <div class="domain-preview">yourname.mooo.com / .is-a.fun</div>
+          <p class="card-desc">The oldest and biggest community offering tens of thousands of free domain names and full dynamic DNS records with zero fees.</p>
+        </div>
+        <a href="https://freedns.afraid.org/" target="_blank" rel="noopener" class="btn">Explore FreeDNS →</a>
+      </div>
+
+      <!-- Option 4 -->
+      <div class="card">
+        <div>
+          <div class="card-top">
+            <span class="card-title">Vercel Cloud</span>
+            <span class="pill">NEXT.JS / HTML</span>
+          </div>
+          <div class="domain-preview">yourname.vercel.app</div>
+          <p class="card-desc">Instant deployment with automatic free SSL and custom domain prefix under .vercel.app in less than 30 seconds.</p>
+        </div>
+        <a href="https://vercel.com/" target="_blank" rel="noopener" class="btn">Claim on Vercel →</a>
+      </div>
+
+      <!-- Option 5 -->
+      <div class="card">
+        <div>
+          <div class="card-top">
+            <span class="card-title">eu.org</span>
+            <span class="pill">FULL TLD ROOT</span>
+          </div>
+          <div class="domain-preview">yourname.eu.org</div>
+          <p class="card-desc">Offers true top-level subdomains since 1996 recognized by Google as regular TLDs with NS records control.</p>
+        </div>
+        <a href="https://nic.eu.org/" target="_blank" rel="noopener" class="btn">Register on EU.org →</a>
+      </div>
+
+      <!-- Option 6 -->
+      <div class="card">
+        <div>
+          <div class="card-top">
+            <span class="card-title">JS.ORG</span>
+            <span class="pill">FOR DEVELOPERS</span>
+          </div>
+          <div class="domain-preview">yourname.js.org</div>
+          <p class="card-desc">Free clean domain specifically dedicated to open source web apps and JavaScript developers.</p>
+        </div>
+        <a href="https://js.org/" target="_blank" rel="noopener" class="btn">Request on JS.org →</a>
+      </div>
+    </div>
+
+    <div class="guide-box">
+      <h2>Quick Start Guide (کیسے حاصل کریں)</h2>
+      <ul class="steps">
+        <li class="step-item">
+          <span class="step-num">1</span>
+          <span class="step-text"><strong>DuckDNS:</strong> DuckDNS.org par jayen, Google ya GitHub se login karein aur apna pasandeeda domain naam enter karke "add domain" dabayein.</span>
+        </li>
+        <li class="step-item">
+          <span class="step-num">2</span>
+          <span class="step-text"><strong>Website Hosting ke sath:</strong> GitHub Pages ya Vercel par apna code upload karein, foran free HTTPS domain mil jata hai.</span>
+        </li>
+        <li class="step-item">
+          <span class="step-num">3</span>
+          <span class="step-text"><strong>Koi Card Nahi Chahiye:</strong> Yeh tamam services bilkul 100% free hain aur kisi bhi credit card ki zaroorat nahi parti.</span>
+        </li>
+      </ul>
+
+      <div class="urdu-guide">
+        اگر آپ کو فوری اور لائف ٹائم فری ڈومین چاہیے تو اوپر دیے گئے بٹنز میں سے <strong>DuckDNS</strong> یا <strong>GitHub Pages</strong> منتخب کریں۔ وہاں صرف 1 منٹ میں لاگ ان کر کے اپنا فری ڈومین نام رجسٹر کر سکتے ہیں۔
+      </div>
+    </div>
+  </div>
+</body>
+</html>

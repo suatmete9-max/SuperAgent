@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snapchat QR Code Generator</title>
+    <!-- Tailwind CSS for modern design -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- QRCode.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: radial-gradient(circle, #fffc00 0%, #f1c40f 100%);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            border-radius: 24px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 font-sans">
+
+    <div class="glass-card w-full max-w-md p-8 text-center transition-all duration-300 hover:shadow-2xl">
+        <!-- Snapchat Logo Header -->
+        <div class="flex justify-center mb-4">
+            <div class="bg-black text-[#fffc00] p-4 rounded-full shadow-lg">
+                <i class="fa-brands fa-snapchat text-5xl"></i>
+            </div>
+        </div>
+
+        <h1 class="text-2xl font-black text-black tracking-wide uppercase">Snapchat QR Code</h1>
+        <p class="text-gray-600 text-sm mt-1">Scan to add on Snapchat</p>
+
+        <!-- Live Input Option -->
+        <div class="my-6">
+            <label class="block text-left text-xs font-bold uppercase text-gray-500 mb-1 ml-1">Snapchat Username</label>
+            <div class="relative">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 font-semibold">@</span>
+                <input 
+                    type="text" 
+                    id="usernameInput" 
+                    value="m.bhat99" 
+                    placeholder="enter username" 
+                    class="w-full pl-8 pr-4 py-3 bg-gray-100 border-2 border-transparent rounded-xl focus:border-black focus:bg-white focus:outline-none transition-all font-bold text-gray-800"
+                />
+            </div>
+        </div>
+
+        <!-- QR Code Display Container -->
+        <div class="flex flex-col items-center justify-center bg-white p-6 rounded-2xl border-4 border-black shadow-inner my-6 relative overflow-hidden">
+            <div id="qrcode" class="p-2 bg-white rounded-lg"></div>
+            <div id="qrcode-brand" class="absolute pointer-events-none bg-black text-[#fffc00] w-10 h-10 rounded-full flex items-center justify-center border-2 border-white shadow-md">
+                <i class="fa-brands fa-snapchat text-lg"></i>
+            </div>
+        </div>
+
+        <!-- Profile Link Display -->
+        <div class="bg-gray-100 py-2.5 px-4 rounded-xl text-sm font-mono text-gray-700 break-all mb-6 flex justify-between items-center">
+            <span id="profileUrl" class="truncate mr-2">https://snapchat.com/add/m.bhat99</span>
+            <button onclick="copyLink()" class="text-black hover:text-yellow-600 transition-colors" title="Copy Link">
+                <i class="fa-regular fa-copy text-lg"></i>
+            </button>
+        </div>
+
+        <!-- Actions -->
+        <div class="grid grid-cols-2 gap-3">
+            <button onclick="downloadQR()" class="w-full py-3 bg-black hover:bg-gray-900 text-white font-bold rounded-xl transition-all shadow-md flex items-center justify-center gap-2">
+                <i class="fa-solid fa-download"></i> Download
+            </button>
+            <a id="snapOpen" href="https://snapchat.com/add/m.bhat99" target="_blank" class="w-full py-3 bg-yellow-400 hover:bg-yellow-500 text-black font-bold rounded-xl transition-all shadow-md flex items-center justify-center gap-2">
+                <i class="fa-solid fa-user-plus"></i> Open Profile
+            </a>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        const usernameInput = document.getElementById('usernameInput');
+        const qrcodeContainer = document.getElementById('qrcode');
+        const profileUrlSpan = document.getElementById('profileUrl');
+        const snapOpenLink = document.getElementById('snapOpen');
+        
+        let qrcode = null;
+
+        function generateQRCode(username) {
+            // Clear existing QR Code content
+            qrcodeContainer.innerHTML = "";
+            
+            const snapchatUrl = `https://www.snapchat.com/add/${username.trim()}`;
+            profileUrlSpan.textContent = snapchatUrl;
+            snapOpenLink.href = snapchatUrl;
+
+            // Generate New QR code
+            qrcode = new QRCode(qrcodeContainer, {
+                text: snapchatUrl,
+                width: 200,
+                height: 200,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+        }
+
+        // Initial generation with default value
+        generateQRCode(usernameInput.value);
+
+        // Listen for input changes to update live
+        usernameInput.addEventListener('input', (e) => {
+            const val = e.target.value.trim();
+            if(val) {
+                generateQRCode(val);
+            }
+        });
+
+        // Copy Link function
+        function copyLink() {
+            const link = profileUrlSpan.textContent;
+            navigator.clipboard.writeText(link).then(() => {
+                alert('Snapchat profile link copied to clipboard!');
+            }).catch(err => {
+                console.error('Could not copy text: ', err);
+            });
+        }
+
+        // Download QR function
+        function downloadQR() {
+            const img = qrcodeContainer.querySelector('img');
+            if (img) {
+                const link = document.createElement('a');
+                link.download = `snapchat-qr-${usernameInput.value}.png`;
+                link.href = img.src;
+                link.click();
+            } else {
+                // Backup for canvas source
+                const canvas = qrcodeContainer.querySelector('canvas');
+                if(canvas) {
+                    const link = document.createElement('a');
+                    link.download = `snapchat-qr-${usernameInput.value}.png`;
+                    link.href = canvas.toDataURL("image/png");
+                    link.click();
+                }
+            }
+        }
+    </script>
+</body>
+</html>

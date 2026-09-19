@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ApexGig - Freelance Client & Earnings Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen">
+
+    <!-- Navbar -->
+    <nav class="bg-slate-800 border-b border-slate-700 px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center space-x-3">
+            <div class="bg-indigo-600 p-2 rounded-lg text-white font-bold text-xl">
+                <i class="fa-solid fa-bolt"></i>
+            </div>
+            <span class="text-xl font-bold tracking-wider text-indigo-400">APEX<span class="text-white">GIG</span></span>
+        </div>
+        <div class="text-sm text-slate-400">
+            <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full">
+                <i class="fa-solid fa-circle-dot mr-1 animate-pulse"></i> Active Freelancer Mode
+            </span>
+        </div>
+    </nav>
+
+    <!-- Main Layout -->
+    <div class="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Left Column: Add Client & Proposal Generator -->
+        <div class="lg:col-span-1 space-y-6">
+            
+            <!-- Quick Earn Tips -->
+            <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl">
+                <h2 class="text-lg font-bold text-indigo-400 mb-3"><i class="fa-solid fa-lightbulb mr-2"></i> High-Earning Strategy</h2>
+                <p class="text-sm text-slate-300 leading-relaxed mb-4">
+                    Fiverr aur Upwork par account banayen. Clients ke projects search karen aur niche diye gaye AI Pitch Templates ko use karke bid karen. Jab order mile, toh aap task complete karne ke liye is tool ki help le sakte hain!
+                </p>
+                <div class="border-t border-slate-700/60 pt-3 text-xs text-slate-400 space-y-1">
+                    <div>💡 <strong>Highly Paid Skills:</strong> AI Content, Translation, Copywriting, Code Debugging.</div>
+                </div>
+            </div>
+
+            <!-- Client Addition Form -->
+            <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl">
+                <h2 class="text-lg font-bold text-white mb-4"><i class="fa-solid fa-user-plus mr-2 text-indigo-500"></i> Naya Client Add Karen</h2>
+                <form id="clientForm" class="space-y-4">
+                    <div>
+                        <label class="block text-xs uppercase font-semibold text-slate-400 mb-1">Client Name</label>
+                        <input type="text" id="clientName" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-indigo-500" placeholder="e.g. John Doe">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase font-semibold text-slate-400 mb-1">Platform</label>
+                        <select id="clientPlatform" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-indigo-500">
+                            <option value="Upwork">Upwork</option>
+                            <option value="Fiverr">Fiverr</option>
+                            <option value="Freelancer">Freelancer</option>
+                            <option value="Direct Client">Direct Client</option>
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs uppercase font-semibold text-slate-400 mb-1">Service</label>
+                            <input type="text" id="clientService" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-indigo-500" placeholder="e.g. Writing">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase font-semibold text-slate-400 mb-1">Budget ($)</label>
+                            <input type="number" id="clientBudget" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-indigo-500" placeholder="e.g. 300">
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
+                        Add & Track Client
+                    </button>
+                </form>
+            </div>
+
+        </div>
+
+        <!-- Right Column: Dashboard Stats & Proposal Generator -->
+        <div class="lg:col-span-2 space-y-6">
+            
+            <!-- Summary Cards -->
+            <div class="grid grid-cols-3 gap-4">
+                <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 flex flex-col">
+                    <span class="text-xs text-slate-400 uppercase font-semibold">Total Clients</span>
+                    <span class="text-3xl font-extrabold text-white mt-2" id="totalClients">0</span>
+                </div>
+                <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 flex flex-col">
+                    <span class="text-xs text-slate-400 uppercase font-semibold">Active Earnings</span>
+                    <span class="text-3xl font-extrabold text-emerald-400 mt-2" id="activeEarnings">$0</span>
+                </div>
+                <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 flex flex-col">
+                    <span class="text-xs text-slate-400 uppercase font-semibold">Avg Project Value</span>
+                    <span class="text-3xl font-extrabold text-indigo-400 mt-2" id="avgValue">$0</span>
+                </div>
+            </div>
+
+            <!-- Clients List Table -->
+            <div class="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-xl">
+                <div class="p-6 border-b border-slate-700 flex justify-between items-center">
+                    <h2 class="text-lg font-bold text-white">Apne Active Gigs aur Clients</h2>
+                    <span class="text-xs text-slate-400">Up-to-date Database</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-900 text-slate-400 text-xs uppercase font-semibold">
+                                <th class="p-4">Client Name</th>
+                                <th class="p-4">Platform</th>
+                                <th class="p-4">Service</th>
+                                <th class="p-4">Budget</th>
+                                <th class="p-4">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clientsTableBody" class="divide-y divide-slate-700/50 text-sm">
+                            <!-- Dynamic content loaded via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- AI Client Pitch / Proposal Generator -->
+            <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl">
+                <h2 class="text-lg font-bold text-white mb-2"><i class="fa-solid fa-magic mr-2 text-indigo-400"></i> AI Proposal Generator (Bidding Ke Liye)</h2>
+                <p class="text-xs text-slate-400 mb-4">Apne service ke mutabiq high-converting custom bid copy karen aur client ko send karen.</p>
+                <div class="grid grid-cols-3 gap-2 mb-4">
+                    <button onclick="generateProposal('writing')" class="bg-slate-700 hover:bg-indigo-600 text-xs py-2 px-3 rounded-lg text-white font-medium transition">Content Writing Pitch</button>
+                    <button onclick="generateProposal('translation')" class="bg-slate-700 hover:bg-indigo-600 text-xs py-2 px-3 rounded-lg text-white font-medium transition">Translation Pitch</button>
+                    <button onclick="generateProposal('dev')" class="bg-slate-700 hover:bg-indigo-600 text-xs py-2 px-3 rounded-lg text-white font-medium transition">Web Dev Pitch</button>
+                </div>
+                <div class="relative bg-slate-900 rounded-xl p-4 border border-slate-700">
+                    <pre id="proposalText" class="text-sm text-slate-300 whitespace-pre-wrap font-mono leading-relaxed h-32 overflow-y-auto">Yahan click karke professional templates load karen...</pre>
+                    <button onclick="copyProposal()" class="absolute top-3 right-3 bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-1.5 rounded-lg transition">
+                        <i class="fa-regular fa-copy mr-1"></i> Copy Pitch
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        const proposals = {
+            writing: `Hi there,\n\nI saw your job posting looking for an expert Content/Article Writer. I can deliver high-quality, SEO-optimized, engaging articles tailored perfectly to your target audience.\n\nWith my optimized workflow, I guarantee error-free, plagiarism-free, and highly researched content with quick turnarounds. Let's discuss your topic so I can share some relevant samples!\n\nBest regards,\nYour Name`,
+            translation: `Hello,\n\nI understand you need accurate and culturally context-aware translations. I specialize in delivering fluent, natural-sounding translations without literal robotic phrasing.\n\nI proofread every single line to ensure flawless readability. Let's start with a quick sample test so you can check the quality!\n\nBest regards,\nYour Name`,
+            dev: `Hi,\n\nI can build a high-performance, modern, and fully responsive website for you using HTML, CSS, JavaScript, and professional design frameworks.\n\nMy projects are focused on speed, excellent user experience, and robust clean code. Let's connect to discuss your design preferences!\n\nBest regards,\nYour Name`
+        };
+
+        function generateProposal(type) {
+            document.getElementById('proposalText').innerText = proposals[type];
+        }
+
+        function copyProposal() {
+            const text = document.getElementById('proposalText').innerText;
+            navigator.clipboard.writeText(text);
+            alert('Proposal successfully copied to clipboard!');
+        }
+
+        // Fetch and render client data
+        async function fetchClients() {
+            try {
+                const response = await fetch('/api/clients');
+                const clients = await response.json();
+                const tbody = document.getElementById('clientsTableBody');
+                tbody.innerHTML = '';
+                
+                let totalBudget = 0;
+                
+                clients.forEach(client => {
+                    totalBudget += client.budget;
+                    const row = document.createElement('tr');
+                    row.className = "hover:bg-slate-700/30 transition";
+                    row.innerHTML = `
+                        <td class="p-4 font-semibold text-white">${client.name}</td>
+                        <td class="p-4"><span class="bg-slate-700 px-2 py-1 rounded text-xs text-slate-300">${client.platform}</span></td>
+                        <td class="p-4 text-slate-300">${client.service}</td>
+                        <td class="p-4 font-bold text-emerald-400">$${client.budget}</td>
+                        <td class="p-4">
+                            <span class="px-2 py-0.5 rounded text-xs font-semibold ${client.status === 'Completed' ? 'bg-emerald-500/20 text-emerald-400' : client.status === 'In Progress' ? 'bg-amber-500/20 text-amber-400' : 'bg-blue-500/20 text-blue-400'}">
+                                ${client.status}
+                            </span>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+                // Update Stats
+                document.getElementById('totalClients').innerText = clients.length;
+                document.getElementById('activeEarnings').innerText = '$' + totalBudget;
+                document.getElementById('avgValue').innerText = '$' + (clients.length ? Math.round(totalBudget / clients.length) : 0);
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        // Handle Client Form Submit
+        document.getElementById('clientForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('clientName').value;
+            const platform = document.getElementById('clientPlatform').value;
+            const service = document.getElementById('clientService').value;
+            const budget = document.getElementById('clientBudget').value;
+
+            const res = await fetch('/api/clients', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, platform, service, budget, status: 'In Progress' })
+            });
+
+            if (res.ok) {
+                document.getElementById('clientForm').reset();
+                fetchClients();
+            }
+        });
+
+        // Initial Load
+        fetchClients();
+    </script>
+</body>
+</html>
