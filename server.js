@@ -5,13 +5,12 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Initialize Gemini with API key from environment
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Frontend Web Interface
+// Frontend Web Interface (ChatGPT / Gemini Style)
 app.get('/', (req, res) => {
     res.send(`
         <!DOCTYPE html>
@@ -30,7 +29,6 @@ app.get('/', (req, res) => {
                 #input-container { width: 100%; max-width: 700px; display: flex; margin-top: 15px; gap: 10px; }
                 input { flex: 1; padding: 12px; border-radius: 6px; border: 1px solid #444; background: #222; color: #fff; font-size: 16px; }
                 button { padding: 12px 20px; background: #00ffcc; color: #000; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
-                button:hover { background: #00b38f; }
             </style>
         </head>
         <body>
@@ -42,19 +40,14 @@ app.get('/', (req, res) => {
                 <input type="text" id="userInput" placeholder="Yahan apni command likhein..." autocomplete="off">
                 <button onclick="sendMessage()">Send</button>
             </div>
-
             <script>
                 const chatContainer = document.getElementById('chat-container');
                 const userInput = document.getElementById('userInput');
-
-                userInput.addEventListener('keypress', function (e) {
-                    if (e.key === 'Enter') sendMessage();
-                });
+                userInput.addEventListener('keypress', function (e) { if (e.key === 'Enter') sendMessage(); });
 
                 async function sendMessage() {
                     const text = userInput.value.trim();
                     if (!text) return;
-
                     chatContainer.innerHTML += \`<div class="message user">\${text}</div>\`;
                     userInput.value = '';
                     chatContainer.scrollTop = chatContainer.scrollHeight;
@@ -68,7 +61,7 @@ app.get('/', (req, res) => {
                         const data = await response.json();
                         chatContainer.innerHTML += \`<div class="message bot">\${data.reply}</div>\`;
                     } catch (err) {
-                        chatContainer.innerHTML += \`<div class="message bot" style="color:red;">Error connecting to server.</div>\`;
+                        chatContainer.innerHTML += \`<div class="message bot" style="color:red;">Connection Error.</div>\`;
                     }
                     chatContainer.scrollTop = chatContainer.scrollHeight;
                 }
@@ -78,31 +71,19 @@ app.get('/', (req, res) => {
     `);
 });
 
-// API Endpoint with Robust Model Fallback & Error Logging
+// API Endpoint for Chat Processing
 app.post('/chat', async (req, res) => {
     const { prompt } = req.body;
-    const modelsPool = ["gemini-1.5-flash", "gemini-1.5-pro", "gemini-flash-latest"];
-    
-    let replyText = null;
-
-    for (const modelName of modelsPool) {
-        try {
-            const model = genAI.getGenerativeModel({ model: modelName });
-            const result = await model.generateContent(prompt);
-            replyText = result.response.text();
-            break; // Success, exit loop
-        } catch (err) {
-            console.error(`Model ${modelName} failed:`, err.message);
-        }
-    }
-
-    if (replyText) {
-        res.json({ reply: replyText });
-    } else {
-        res.status(500).json({ reply: "All models busy or configuration error. Please check Render logs." });
+    try {
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const result = await model.generateContent(prompt);
+        const responseText = result.response.text();
+        res.json({ reply: responseText });
+    } catch (error) {
+        res.json({ reply: "Server error or high load. Please try again." });
     }
 });
 
 app.listen(port, () => {
-    console.log(`🚀 Apex Web Server running on port ${port}`);
+    console.log(`🚀 Apex Web Server running at: http://localhost:${port}`);
 });
