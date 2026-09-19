@@ -5,12 +5,9 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 const app = express();
 const port = process.env.PORT || 3000;
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Frontend Web Interface (ChatGPT / Gemini Style)
 app.get('/', (req, res) => {
     res.send(`
         <!DOCTYPE html>
@@ -23,7 +20,7 @@ app.get('/', (req, res) => {
                 body { font-family: Arial, sans-serif; background: #121212; color: #fff; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; height: 100vh; box-sizing: border-box; }
                 h1 { color: #00ffcc; margin-bottom: 10px; }
                 #chat-container { width: 100%; max-width: 700px; height: 70vh; background: #1e1e1e; border-radius: 10px; padding: 15px; overflow-y: auto; border: 1px solid #333; display: flex; flex-direction: column; gap: 10px; }
-                .message { padding: 10px 15px; border-radius: 8px; max-width: 80%; line-height: 1.4; word-break: break-word; }
+                .message { padding: 10px 15px; border-radius: 8px; max-width: 80%; line-height: 1.4; word-break: break-word; white-space: pre-wrap; }
                 .user { background: #007acc; align-self: flex-end; }
                 .bot { background: #2d2d2d; align-self: flex-start; border: 1px solid #444; }
                 #input-container { width: 100%; max-width: 700px; display: flex; margin-top: 15px; gap: 10px; }
@@ -71,19 +68,24 @@ app.get('/', (req, res) => {
     `);
 });
 
-// API Endpoint for Chat Processing
 app.post('/chat', async (req, res) => {
     const { prompt } = req.body;
     try {
+        if (!process.env.GEMINI_API_KEY) {
+            return res.json({ reply: "Error: GEMINI_API_KEY is missing." });
+        }
+        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+        // Using standard gemini-1.5-flash model
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
         const result = await model.generateContent(prompt);
         const responseText = result.response.text();
         res.json({ reply: responseText });
     } catch (error) {
-        res.json({ reply: "Server error or high load. Please try again." });
+        console.error("API Error:", error);
+        res.json({ reply: `Error details: ${error.message}` });
     }
 });
 
 app.listen(port, () => {
-    console.log(`🚀 Apex Web Server running at: http://localhost:${port}`);
+    console.log(`Server running on port ${port}`);
 });
