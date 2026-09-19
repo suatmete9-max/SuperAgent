@@ -1,17 +1,17 @@
 require('dotenv').config();
 const express = require('express');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
-const path = require('path');
 
 const app = express();
 const port = process.env.PORT || 3000;
 
+// Initialize Gemini with API key from environment
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Frontend Web Interface (ChatGPT / Gemini Style)
+// Frontend Web Interface
 app.get('/', (req, res) => {
     res.send(`
         <!DOCTYPE html>
@@ -78,19 +78,31 @@ app.get('/', (req, res) => {
     `);
 });
 
-// API Endpoint for Chat Processing
+// API Endpoint with Robust Model Fallback & Error Logging
 app.post('/chat', async (req, res) => {
     const { prompt } = req.body;
-    try {
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-        const result = await model.generateContent(prompt);
-        const responseText = result.response.text();
-        res.json({ reply: responseText });
-    } catch (error) {
-        res.json({ reply: "Server error or high load. Please try again." });
+    const modelsPool = ["gemini-1.5-flash", "gemini-1.5-pro", "gemini-flash-latest"];
+    
+    let replyText = null;
+
+    for (const modelName of modelsPool) {
+        try {
+            const model = genAI.getGenerativeModel({ model: modelName });
+            const result = await model.generateContent(prompt);
+            replyText = result.response.text();
+            break; // Success, exit loop
+        } catch (err) {
+            console.error(`Model ${modelName} failed:`, err.message);
+        }
+    }
+
+    if (replyText) {
+        res.json({ reply: replyText });
+    } else {
+        res.status(500).json({ reply: "All models busy or configuration error. Please check Render logs." });
     }
 });
 
 app.listen(port, () => {
-    console.log(`🚀 Apex Web Server running at: http://localhost:${port}`);
+    console.log(`🚀 Apex Web Server running on port ${port}`);
 });
