@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Apex-Web [Elite Diagnostic Engine]</title>
+            <title>Apex-Web [1% Elite Engine]</title>
             <style>
                 body { font-family: Arial, sans-serif; background: #121212; color: #fff; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; height: 100vh; box-sizing: border-box; }
                 h1 { color: #00ffcc; margin-bottom: 10px; }
@@ -29,9 +29,9 @@ app.get('/', (req, res) => {
             </style>
         </head>
         <body>
-            <h1>APEX-WEB DIAGNOSTIC ENGINE</h1>
+            <h1>APEX-WEB ENGINE</h1>
             <div id="chat-container">
-                <div class="message bot">Hello Master! Diagnostic mode active hai.</div>
+                <div class="message bot">Hello Master! Multi-Fallback System Active and Models Fixed.</div>
             </div>
             <div id="input-container">
                 <input type="text" id="userInput" placeholder="Yahan apni command likhein..." autocomplete="off">
@@ -72,22 +72,20 @@ app.post('/chat', async (req, res) => {
     const { prompt } = req.body;
     let errorsLog = [];
 
-    // 1. Try Gemini
+    // 1. Try Gemini (Fixed Model Name)
     if (process.env.GEMINI_API_KEY) {
         try {
             const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-            const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+            const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
             const result = await model.generateContent(prompt);
             const text = result.response.text();
             if (text) return res.json({ reply: text });
         } catch (e) {
-            errorsLog.push("Gemini Error: " + e.message);
+            errorsLog.push("Gemini: " + e.message);
         }
-    } else {
-        errorsLog.push("Gemini Key Missing");
     }
 
-    // 2. Try Groq
+    // 2. Try Groq (Fixed Model Name)
     if (process.env.GROQ_API_KEY) {
         try {
             const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -97,7 +95,7 @@ app.post('/chat', async (req, res) => {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    model: "llama-3.1-8b-instant",
+                    model: "llama3-8b-8192",
                     messages: [{ role: "user", content: prompt }]
                 })
             });
@@ -105,16 +103,14 @@ app.post('/chat', async (req, res) => {
             if (data.choices && data.choices[0]) {
                 return res.json({ reply: data.choices[0].message.content });
             } else {
-                errorsLog.push("Groq Response Error: " + JSON.stringify(data));
+                errorsLog.push("Groq Format Error");
             }
         } catch (e) {
-            errorsLog.push("Groq Fetch Error: " + e.message);
+            errorsLog.push("Groq: " + e.message);
         }
-    } else {
-        errorsLog.push("Groq Key Missing");
     }
 
-    // 3. Try OpenRouter
+    // 3. Try OpenRouter (Fixed Model Name)
     if (process.env.OPENROUTER_API_KEY) {
         try {
             const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
@@ -124,7 +120,7 @@ app.post('/chat', async (req, res) => {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    model: "google/gemini-flash-1.5",
+                    model: "google/gemini-1.5-flash",
                     messages: [{ role: "user", content: prompt }]
                 })
             });
@@ -132,17 +128,14 @@ app.post('/chat', async (req, res) => {
             if (data.choices && data.choices[0]) {
                 return res.json({ reply: data.choices[0].message.content });
             } else {
-                errorsLog.push("OpenRouter Response Error: " + JSON.stringify(data));
+                errorsLog.push("OpenRouter Format Error");
             }
         } catch (e) {
-            errorsLog.push("OpenRouter Fetch Error: " + e.message);
+            errorsLog.push("OpenRouter: " + e.message);
         }
-    } else {
-        errorsLog.push("OpenRouter Key Missing");
     }
 
-    // If all failed, return exact error logs
-    res.json({ reply: "All APIs Failed -> " + errorsLog.join(" | ") });
+    res.json({ reply: "Errors: " + errorsLog.join(" | ") });
 });
 
 app.listen(port, () => {
