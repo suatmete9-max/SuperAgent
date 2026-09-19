@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Apex-Web [1% Elite Multi-Fallback Engine]</title>
+            <title>Apex-Web [Elite Diagnostic Engine]</title>
             <style>
                 body { font-family: Arial, sans-serif; background: #121212; color: #fff; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; height: 100vh; box-sizing: border-box; }
                 h1 { color: #00ffcc; margin-bottom: 10px; }
@@ -29,9 +29,9 @@ app.get('/', (req, res) => {
             </style>
         </head>
         <body>
-            <h1>APEX-WEB MULTI-FALLBACK ENGINE</h1>
+            <h1>APEX-WEB DIAGNOSTIC ENGINE</h1>
             <div id="chat-container">
-                <div class="message bot">Hello Master! Main Apex hoon. Multi-AI fallback system active hai.</div>
+                <div class="message bot">Hello Master! Diagnostic mode active hai.</div>
             </div>
             <div id="input-container">
                 <input type="text" id="userInput" placeholder="Yahan apni command likhein..." autocomplete="off">
@@ -70,24 +70,25 @@ app.get('/', (req, res) => {
 
 app.post('/chat', async (req, res) => {
     const { prompt } = req.body;
-    let replyText = null;
+    let errorsLog = [];
 
+    // 1. Try Gemini
     if (process.env.GEMINI_API_KEY) {
-        const geminiModels = ["gemini-pro", "gemini-1.5-pro", "gemini-1.5-flash-latest"];
-        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        for (const m of geminiModels) {
-            try {
-                const model = genAI.getGenerativeModel({ model: m });
-                const result = await model.generateContent(prompt);
-                replyText = result.response.text();
-                if (replyText) break;
-            } catch (e) {
-                console.log("Gemini model failed, trying next...");
-            }
+        try {
+            const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+            const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+            const result = await model.generateContent(prompt);
+            const text = result.response.text();
+            if (text) return res.json({ reply: text });
+        } catch (e) {
+            errorsLog.push("Gemini Error: " + e.message);
         }
+    } else {
+        errorsLog.push("Gemini Key Missing");
     }
 
-    if (!replyText && process.env.GROQ_API_KEY) {
+    // 2. Try Groq
+    if (process.env.GROQ_API_KEY) {
         try {
             const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
                 method: "POST",
@@ -96,20 +97,25 @@ app.post('/chat', async (req, res) => {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    model: "llama-3.1-70b-versatile",
+                    model: "llama-3.1-8b-instant",
                     messages: [{ role: "user", content: prompt }]
                 })
             });
             const data = await response.json();
             if (data.choices && data.choices[0]) {
-                replyText = data.choices[0].message.content;
+                return res.json({ reply: data.choices[0].message.content });
+            } else {
+                errorsLog.push("Groq Response Error: " + JSON.stringify(data));
             }
         } catch (e) {
-            console.log("Groq fallback failed.");
+            errorsLog.push("Groq Fetch Error: " + e.message);
         }
+    } else {
+        errorsLog.push("Groq Key Missing");
     }
 
-    if (!replyText && process.env.OPENROUTER_API_KEY) {
+    // 3. Try OpenRouter
+    if (process.env.OPENROUTER_API_KEY) {
         try {
             const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
                 method: "POST",
@@ -124,18 +130,19 @@ app.post('/chat', async (req, res) => {
             });
             const data = await response.json();
             if (data.choices && data.choices[0]) {
-                replyText = data.choices[0].message.content;
+                return res.json({ reply: data.choices[0].message.content });
+            } else {
+                errorsLog.push("OpenRouter Response Error: " + JSON.stringify(data));
             }
         } catch (e) {
-            console.log("OpenRouter fallback failed.");
+            errorsLog.push("OpenRouter Fetch Error: " + e.message);
         }
+    } else {
+        errorsLog.push("OpenRouter Key Missing");
     }
 
-    if (replyText) {
-        res.json({ reply: replyText });
-    } else {
-        res.json({ reply: "Sabhi AI providers busy hain ya API keys mein koi dikkat hai." });
-    }
+    // If all failed, return exact error logs
+    res.json({ reply: "All APIs Failed -> " + errorsLog.join(" | ") });
 });
 
 app.listen(port, () => {
